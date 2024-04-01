@@ -17,70 +17,56 @@ import javafx.stage.Stage;
 
 public class Login {
     public void start(Stage primaryStage) {
-        VBox root = new VBox();
-        root.setAlignment(Pos.CENTER);
-        root.setSpacing(10);
-        root.setSpacing(15);
-        root.setPadding(new Insets(20));
+        public void start(Stage primaryStage) {
+        
+        VBox root = Functions.createRootVBox();
 
-        Label welcomeLabel = new Label("Welcome to BlueTerrain");
-        welcomeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
-        welcomeLabel.setStyle("-fx-text-fill: darkblue;");
-
+        HBox loginTypeBox = new HBox(10);
+        loginTypeBox.setAlignment(Pos.CENTER);
         Label loginTypeLabel = new Label("Select login type");
         loginTypeLabel.setFont(new Font(15));
         loginTypeLabel.setStyle("-fx-text-fill: black;");
-        ChoiceBox<String> loginTypeChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Customer", "Staff"));
+        ChoiceBox<String> loginTypeChoiceBox = new 
+                ChoiceBox<>(FXCollections.observableArrayList("Customer", "Staff"));
         loginTypeChoiceBox.getSelectionModel().selectFirst();
         loginTypeChoiceBox.setStyle("-fx-text-fill: black;");
+        loginTypeBox.getChildren().addAll(loginTypeLabel, loginTypeChoiceBox);
 
-        HBox usernameBox = new HBox(10);
-        Label usernameLabel = new Label("Username");
-        usernameLabel.setFont(new Font(20));
-        usernameLabel.setStyle("-fx-text-fill: darkblue;");
-        TextField usernameField = new TextField();
-        usernameField.setPromptText("Enter your username");
-        usernameField.setFont(new Font(15));
-        usernameField.setMaxWidth(400);
-        usernameBox.getChildren().addAll(usernameLabel, usernameField);
-        usernameBox.setAlignment(Pos.CENTER);
+        HBox usernameBox = Functions.createLabeledField("Username", "Enter your username");
+        Button loginButton = Functions.createButton("Login");
 
-        HBox passwordBox = new HBox(10);
-        Label passwordLabel = new Label("Password");
-        passwordLabel.setFont(new Font(20));
-        passwordLabel.setStyle("-fx-text-fill: darkblue;");
-        PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Enter your password");
-        passwordField.setFont(new Font(15));
-        passwordField.setMaxWidth(400);
-        passwordBox.getChildren().addAll(passwordLabel, passwordField);
-        passwordBox.setAlignment(Pos.CENTER);
-
-        Button loginButton = new Button("Login");
-        loginButton.setStyle("-fx-text-fill: darkblue;");
-        loginButton.setOnAction(e -> {
-            String username = usernameField.getText();
-            String password = passwordField.getText();
-
-            if (authenticate(username, password)) {
-                root.getChildren().clear();
-                root.getChildren().add(new Label("Welcome, " + username + " to BlueTerrain"));
-            } else {
-                root.getChildren().clear();
-                root.getChildren().addAll(new Label("Invalid username or password."), usernameLabel, usernameField, passwordLabel, passwordField, loginButton);
-            }
+        Hyperlink signUpLink = new Hyperlink("Don't have an account? Sign up");
+        signUpLink.setOnAction(e -> {
+            Signup signUpPage = new Signup();
+            signUpPage.start(primaryStage, "Customer");
         });
-        loginButton.setFont(new Font(17));
 
+        root.getChildren().addAll(Functions.welcomePane(), loginTypeBox, 
+                    usernameBox, loginButton, signUpLink);
+        Functions.setupAndShowScene(primaryStage, root, 800, 600); 
         
+        loginButton.setOnAction(e -> {
+            Restaurant restaurant = new Restaurant();
+            restaurant.start(primaryStage);
+        });
 
-        root.getChildren().addAll(welcomeLabel, loginTypeLabel, loginTypeChoiceBox, usernameBox, passwordBox, loginButton);
-        Scene scene = new Scene(root, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();    
+        // loginButton.setOnAction(e -> {
+        //     String username = usernameField.getText();
+        //     String password = passwordField.getText();
+
+        //     if (authenticate(username, password)) {
+        //         root.getChildren().clear();
+        //         root.getChildren().add(new Label("Welcome, " 
+        //                 + username + " to BlueTerrain"));
+        //     } else {
+        //         root.getChildren().clear();
+        //         root.getChildren().addAll(new Label("Invalid username or password."), 
+        //                 usernameLabel, usernameField, passwordLabel, passwordField, loginButton);
+        //     }
+        // });
     }
 
-    private boolean authenticate(String username, String password) {
-        return username.equals("admin") && password.equals("password");
-    }
+    // private boolean authenticate(String username, String password) {
+    //     return username.equals("admin") && password.equals("password");
+    // }
 }
