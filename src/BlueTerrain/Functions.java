@@ -22,6 +22,28 @@ import javafx.stage.Stage;
 
 public class Functions {
 
+    public static Connection getConnection() {
+        Connection connection = null;
+        try {
+            // JDBC URL, username, and password of MySQL server
+            String JDBC_URL = "jdbc:mysql://localhost:3306/BlueTerrain_Restaurant";
+            String USERNAME = "root";
+            String PASSWORD = "";
+
+            connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
+            if (connection != null) {
+                System.out.println("DB Connection successful");
+            } else {
+                System.out.println("Unsuccessful");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            // Handle connection error
+            System.err.println("Failed to connect to database: " + e.getMessage());
+        }
+        return connection;
+    }
+
     public static StackPane welcomePane() {
         Color lightBlue = Color.rgb(173, 216, 230);
         StackPane lightBluePadding = new StackPane();

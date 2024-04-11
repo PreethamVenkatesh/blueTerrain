@@ -66,6 +66,46 @@ public class Signup {
             }
         });
 
+        signUpButton.setOnAction(e -> {
+            String firstName = ((TextField) firstNameBox.getChildren().get(1)).getText();
+            String lastName = ((TextField) lastNameBox.getChildren().get(1)).getText();
+            String email = ((TextField) emailBox.getChildren().get(1)).getText();
+            String address = ((TextField) addressBox.getChildren().get(1)).getText();
+            String profileType = profileTypeChoiceBox.getValue();
+            String tableName;
+
+            if (signUpTypeChoiceBox.getValue().equals("Customer")) {
+                tableName = "customers";
+            } else {
+                tableName = "staffs";
+            }
+
+            try {
+                Connection connection = Functions.getConnection();
+                if (tableName.equals("customers")) {
+                    String query = "INSERT INTO " + tableName + " (first_name, last_name, email, address) VALUES (?, ?, ?, ?)";
+                    PreparedStatement preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setString(1, firstName);
+                    preparedStatement.setString(2, lastName);
+                    preparedStatement.setString(3, email);
+                    preparedStatement.setString(4, address);
+                    preparedStatement.executeUpdate();
+                } else {
+                    String query = "INSERT INTO " + tableName + " (first_name, last_name, email, profile_type) VALUES (?, ?, ?, ?)";
+                    PreparedStatement preparedStatement = connection.prepareStatement(query);
+                    preparedStatement.setString(1, firstName);
+                    preparedStatement.setString(2, lastName);
+                    preparedStatement.setString(3, email);
+                    preparedStatement.setString(4, profileType);
+                    preparedStatement.executeUpdate();
+                }   
+                System.out.println("User signed up successfully!");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                System.err.println("Error: Failed to sign up user");
+            }
+        });
+
         root.getChildren().addAll(Functions.welcomePane(), signupTypeBox, firstNameBox, 
                     lastNameBox, emailBox, addressBox, signUpButton);
         Functions.setupAndShowScene(primaryStage, root, 800, 600); 
