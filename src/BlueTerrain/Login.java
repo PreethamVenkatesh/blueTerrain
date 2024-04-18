@@ -1,23 +1,28 @@
 package BlueTerrain;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import javafx.collections.FXCollections;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class Login {
+<<<<<<< HEAD
         public void start(Stage primaryStage) {
+=======
+    public void start(Stage primaryStage) {
+>>>>>>> 9bfa5410f9d6d81c3369899f5863b21fd776248f
         
         VBox root = Functions.createRootVBox();
 
@@ -46,27 +51,35 @@ public class Login {
         Functions.setupAndShowScene(primaryStage, root, 800, 600); 
         
         loginButton.setOnAction(e -> {
-            Restaurant restaurant = new Restaurant();
-            restaurant.start(primaryStage);
+            TextField usernameField = (TextField) usernameBox.getChildren().get(1);
+            String username = usernameField.getText();
+            String loginType = loginTypeChoiceBox.getValue();
+
+            if (authenticate(username, loginType)) {
+                Restaurant restaurant = new Restaurant();
+                restaurant.start(primaryStage);
+            } else {
+                System.out.println("Invalid username.");
+            }
+
+            
         });
-
-        // loginButton.setOnAction(e -> {
-        //     String username = usernameField.getText();
-        //     String password = passwordField.getText();
-
-        //     if (authenticate(username, password)) {
-        //         root.getChildren().clear();
-        //         root.getChildren().add(new Label("Welcome, " 
-        //                 + username + " to BlueTerrain"));
-        //     } else {
-        //         root.getChildren().clear();
-        //         root.getChildren().addAll(new Label("Invalid username or password."), 
-        //                 usernameLabel, usernameField, passwordLabel, passwordField, loginButton);
-        //     }
-        // });
     }
 
-    // private boolean authenticate(String username, String password) {
-    //     return username.equals("admin") && password.equals("password");
-    // }
+    private boolean authenticate(String username, String loginType) {
+        String tableName = (loginType.equals("Customer")) ? "customers" : "staffs";
+        String query = "SELECT * FROM " + tableName + " WHERE first_name = ?";
+        
+        try (Connection connection = Functions.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next(); 
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to authenticate user");
+            return false; 
+        }
+    }
 }
