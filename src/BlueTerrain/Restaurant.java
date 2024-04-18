@@ -33,41 +33,31 @@ public class Restaurant {
         welcomeLabel.setStyle("-fx-text-fill: darkblue;");
         lightBluePadding.getChildren().add(welcomeLabel);
 
-        MenuButton menuButton = new MenuButton("MENU");
-        menuButton.setFont(new Font(15));
-        menuButton.setTextFill(Color.DARKBLUE);
+        Label openingHoursLabel = new Label("Opening Hours: 11:00 AM - 12:00 PM");
+        openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+        openingHoursLabel.setStyle("-fx-text-fill: darkblue;");
 
-        MenuItem item1 = new MenuItem("Item 1");
-        MenuItem item2 = new MenuItem("Item 2");
-        MenuItem item3 = new MenuItem("Item 3");
-        MenuItem item4 = new MenuItem("Item 4");
+        VBox leftBox = createButtonVBox(Color.YELLOW, "BOOKINGS", "EVENTS", "MENU");
+        VBox centreBox = createButtonVBox(Color.ORANGE, "ORDERS", "TABLES", "STAFFS");
+        VBox rightBox = createButtonVBox(Color.GREENYELLOW, "DELIVERY", "REPORTS", "HISTORY");
 
-        ContextMenu chipMenu1 = createChipMenu("Chip 1", "Chip 2", "Chip 3");
-        ContextMenu chipMenu2 = createChipMenu("Chip A", "Chip B", "Chip C");
-        ContextMenu chipMenu3 = createChipMenu("Chip X", "Chip Y", "Chip Z");
-        ContextMenu chipMenu4 = createChipMenu("Chip Alpha", "Chip Beta", "Chip Gamma");
+        HBox buttonsBox = new HBox(50); 
+        buttonsBox.setAlignment(Pos.CENTER);
+        buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
 
-        item1.setOnAction(e -> chipMenu1.show(menuButton, Side.BOTTOM, 0, 0));
-        item2.setOnAction(e -> chipMenu2.show(menuButton, Side.BOTTOM, 0, 0));
-        item3.setOnAction(e -> chipMenu3.show(menuButton, Side.BOTTOM, 0, 0));
-        item4.setOnAction(e -> chipMenu4.show(menuButton, Side.BOTTOM, 0, 0));
-
-        menuButton.getItems().addAll(item1, item2, item3, item4);
-
-        HBox header = new HBox(15);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.getChildren().addAll(menuButton);
-
-        root.getChildren().addAll(lightBluePadding, header);
+        root.getChildren().addAll(lightBluePadding, openingHoursLabel, buttonsBox);
         Functions.setupAndShowScene(primaryStage, root, 800, 600);
     }
 
-    private ContextMenu createChipMenu(String... chipItems) {
-        ContextMenu contextMenu = new ContextMenu();
-        for (String chipItem : chipItems) {
-            MenuItem menuItem = new MenuItem(chipItem);
-            contextMenu.getItems().add(menuItem);
+    private VBox createButtonVBox(Color color, String... buttonLabels) {
+        VBox box = new VBox(20);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(20));
+        
+        for (String label : buttonLabels) {
+            Button button = createButton(label, color);
+            box.getChildren().add(button);
         }
-        return contextMenu;
+        return box;
     }
 }
