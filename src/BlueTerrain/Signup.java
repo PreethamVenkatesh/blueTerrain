@@ -1,10 +1,16 @@
 package BlueTerrain;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -100,14 +106,24 @@ public class Signup {
                     preparedStatement.executeUpdate();
                 }   
                 System.out.println("User signed up successfully!");
+                primaryStage.close();
+                Login login = new Login();
+                login.start(new Stage());
             } catch (SQLException ex) {
                 ex.printStackTrace();
                 System.err.println("Error: Failed to sign up user");
             }
         });
 
+        Hyperlink loginLink = new Hyperlink("Return to Login page");
+        loginLink.setOnAction(e -> {
+            primaryStage.close();
+                Login login = new Login();
+                login.start(new Stage());
+        });
+
         root.getChildren().addAll(Functions.welcomePane(), signupTypeBox, firstNameBox, 
-                    lastNameBox, emailBox, addressBox, signUpButton);
+                    lastNameBox, emailBox, addressBox, signUpButton, loginLink);
         Functions.setupAndShowScene(primaryStage, root, 800, 600); 
     }
 }
