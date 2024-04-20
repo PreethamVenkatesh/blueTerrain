@@ -14,21 +14,25 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Login {
-<<<<<<< HEAD
-        public void start(Stage primaryStage) {
-=======
-    public void start(Stage primaryStage) {
->>>>>>> 9bfa5410f9d6d81c3369899f5863b21fd776248f
-        
+
+    private static String LOGIN_TYPE = "Select login type";
+    private static String SIGN_UP = "Don't have an account? Sign up";
+    private static String ENTER_USERNAME = "Enter your username";
+    private static String INVALID_USERNAME = "Invalid username.";
+    private static String FAILED_AUTHENTICATE = "Error: Failed to authenticate user";
+
+    public void start(Stage primaryStage) {        
         VBox root = Functions.createRootVBox();
 
         HBox loginTypeBox = new HBox(10);
         loginTypeBox.setAlignment(Pos.CENTER);
-        Label loginTypeLabel = new Label("Select login type");
+        Label loginTypeLabel = new Label(LOGIN_TYPE);
         loginTypeLabel.setFont(new Font(15));
         loginTypeLabel.setStyle("-fx-text-fill: black;");
         ChoiceBox<String> loginTypeChoiceBox = new 
@@ -37,17 +41,20 @@ public class Login {
         loginTypeChoiceBox.setStyle("-fx-text-fill: black;");
         loginTypeBox.getChildren().addAll(loginTypeLabel, loginTypeChoiceBox);
 
-        HBox usernameBox = Functions.createLabeledField("Username", "Enter your username");
+        HBox usernameBox = Functions.createLabeledField("Username", ENTER_USERNAME);
         Button loginButton = Functions.createButton("Login");
 
-        Hyperlink signUpLink = new Hyperlink("Don't have an account? Sign up");
+        Hyperlink signUpLink = new Hyperlink(SIGN_UP);
         signUpLink.setOnAction(e -> {
             Signup signUpPage = new Signup();
             signUpPage.start(primaryStage, "Customer");
         });
 
+        Text errorMessage = new Text();
+        errorMessage.setFill(Color.RED);
+
         root.getChildren().addAll(Functions.welcomePane(), loginTypeBox, 
-                    usernameBox, loginButton, signUpLink);
+                    usernameBox, loginButton, signUpLink, errorMessage);
         Functions.setupAndShowScene(primaryStage, root, 800, 600); 
         
         loginButton.setOnAction(e -> {
@@ -56,10 +63,14 @@ public class Login {
             String loginType = loginTypeChoiceBox.getValue();
 
             if (authenticate(username, loginType)) {
-                Restaurant restaurant = new Restaurant();
-                restaurant.start(primaryStage);
+                if (loginType.equals("Staff")) { 
+                    Restaurant restaurant = new Restaurant();
+                    restaurant.start(primaryStage);
+                } else {
+                    errorMessage.setText("Customer login development in progress");
+                }
             } else {
-                System.out.println("Invalid username.");
+                errorMessage.setText(INVALID_USERNAME);
             }
 
             
@@ -78,8 +89,10 @@ public class Login {
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            System.err.println("Error: Failed to authenticate user");
+            System.err.println(FAILED_AUTHENTICATE);
             return false; 
         }
     }
 }
+
+
