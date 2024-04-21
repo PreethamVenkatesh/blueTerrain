@@ -73,6 +73,6 @@ public class ActiveCustomer extends Report {
         primaryStage.setTitle("Report - Active Customers");
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
 
+    }
 }

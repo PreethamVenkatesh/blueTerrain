@@ -64,4 +64,5 @@ public class PeakTime extends Report {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 }

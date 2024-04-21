@@ -34,6 +34,7 @@ public class Staff {
         Button waiterButton = Functions.createButton("WAITERS");
         Button driverButton = Functions.createButton("DELIVERY\nDRIVERS");
 
+
         setTooltipStaff(managerButton, fetchNames("Manager"));
         setTooltipStaff(chefButton, fetchNames("Chef"));
         setTooltipStaff(waiterButton, fetchNames("Waiter"));
@@ -61,15 +62,17 @@ public class Staff {
     }
 
     private static ArrayList<String> fetchNames(String profileType) {
-        String query = "SELECT CONCAT(first_name, ' ', last_name) AS full_name "
-                + "FROM staffs "
-                + "WHERE profile_type = ?";
 
+        String query = "SELECT CONCAT(first_name, ' ', last_name) AS full_name " +
+                          "FROM staffs " +
+                          "WHERE profile_type = ?";
+        
         ArrayList<String> tooltipTextList = new ArrayList<>();
-        try (Connection connection = Functions.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
+        try (Connection connection = Functions.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            
             preparedStatement.setString(1, profileType);
-
+            
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     String fullName = resultSet.getString("full_name");
@@ -80,7 +83,6 @@ public class Staff {
             ex.printStackTrace();
             System.err.println("Error: Failed to fetch names");
         }
-
         return tooltipTextList;
     }
 

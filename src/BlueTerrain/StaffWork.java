@@ -61,4 +61,5 @@ public class StaffWork extends Report {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 }

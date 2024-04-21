@@ -32,6 +32,7 @@ public class Restaurant {
         VBox rightBox = createButtonVBox(Color.GREENYELLOW, "DELIVERY", "REPORTS", "HISTORY");
 
         HBox buttonsBox = new HBox(50);
+
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
 

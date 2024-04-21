@@ -60,4 +60,5 @@ public class PopularItem extends Report {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 }

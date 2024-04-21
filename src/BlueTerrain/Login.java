@@ -63,6 +63,7 @@ public class Login {
 
             if (authenticate(username, loginType)) {
                 if (loginType.equals("Staff")) {
+
                     Restaurant restaurant = new Restaurant();
                     restaurant.start(primaryStage);
                 } else {
@@ -78,16 +79,17 @@ public class Login {
     private boolean authenticate(String username, String loginType) {
         String tableName = (loginType.equals("Customer")) ? "customers" : "staffs";
         String query = "SELECT * FROM " + tableName + " WHERE first_name = ?";
-
         try (Connection connection = Functions.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next();
+
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println(FAILED_AUTHENTICATE);
             return false;
+
         }
     }
 }
