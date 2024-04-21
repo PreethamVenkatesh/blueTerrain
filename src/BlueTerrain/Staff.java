@@ -1,4 +1,4 @@
-package BlueTerrain;
+package Bluetrain;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -7,7 +7,6 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -18,7 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Staff {
-    
+
     public static void showStaffPopup(Stage primaryStage) {
         Stage menuPopup = new Stage();
         menuPopup.initOwner(primaryStage);
@@ -28,20 +27,21 @@ public class Staff {
         VBox root = Functions.createRootVBox();
         root.setAlignment(Pos.TOP_CENTER);
 
-        StackPane lightBluePadding = Functions.restuarantLabel();
+        StackPane lightBluePadding = Functions.welcomePane();
 
-        Button managerButton = Functions.createButtonMenu("MANAGERS", Color.LAVENDER);
-        Button chefButton = Functions.createButtonMenu("CHEFS", Color.LAVENDER);
-        Button waiterButton = Functions.createButtonMenu("WAITERS", Color.LAVENDER);
-        Button driverButton = Functions.createButtonMenu("DELIVERY\nDRIVERS", Color.LAVENDER);
+        Button managerButton = Functions.createButton("MANAGERS");
+        Button chefButton = Functions.createButton("CHEFS");
+        Button waiterButton = Functions.createButton("WAITERS");
+        Button driverButton = Functions.createButton("DELIVERY\nDRIVERS");
+
 
         setTooltipStaff(managerButton, fetchNames("Manager"));
         setTooltipStaff(chefButton, fetchNames("Chef"));
         setTooltipStaff(waiterButton, fetchNames("Waiter"));
         setTooltipStaff(driverButton, fetchNames("Delivery Driver"));
 
-        VBox leftBox = Functions.createButtonVBoxMenu(managerButton, chefButton);
-        VBox rightBox = Functions.createButtonVBoxMenu(waiterButton, driverButton);
+        VBox leftBox = Functions.createButtonVBox(managerButton, chefButton);
+        VBox rightBox = Functions.createButtonVBox(waiterButton, driverButton);
 
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
@@ -62,6 +62,7 @@ public class Staff {
     }
 
     private static ArrayList<String> fetchNames(String profileType) {
+
         String query = "SELECT CONCAT(first_name, ' ', last_name) AS full_name " +
                           "FROM staffs " +
                           "WHERE profile_type = ?";
@@ -82,7 +83,6 @@ public class Staff {
             ex.printStackTrace();
             System.err.println("Error: Failed to fetch names");
         }
-        
         return tooltipTextList;
     }
 

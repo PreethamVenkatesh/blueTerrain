@@ -1,4 +1,4 @@
-package BlueTerrain;
+package Bluetrain;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +27,7 @@ public class Login {
     private static String INVALID_USERNAME = "Invalid username.";
     private static String FAILED_AUTHENTICATE = "Error: Failed to authenticate user";
 
-    public void start(Stage primaryStage) {        
+    public void start(Stage primaryStage) {
         VBox root = Functions.createRootVBox();
 
         HBox loginTypeBox = new HBox(10);
@@ -35,8 +35,7 @@ public class Login {
         Label loginTypeLabel = new Label(LOGIN_TYPE);
         loginTypeLabel.setFont(new Font(15));
         loginTypeLabel.setStyle("-fx-text-fill: black;");
-        ChoiceBox<String> loginTypeChoiceBox = new 
-                ChoiceBox<>(FXCollections.observableArrayList("Customer", "Staff"));
+        ChoiceBox<String> loginTypeChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Customer", "Staff"));
         loginTypeChoiceBox.getSelectionModel().selectFirst();
         loginTypeChoiceBox.setStyle("-fx-text-fill: black;");
         loginTypeBox.getChildren().addAll(loginTypeLabel, loginTypeChoiceBox);
@@ -53,17 +52,18 @@ public class Login {
         Text errorMessage = new Text();
         errorMessage.setFill(Color.RED);
 
-        root.getChildren().addAll(Functions.welcomePane(), loginTypeBox, 
-                    usernameBox, loginButton, signUpLink, errorMessage);
-        Functions.setupAndShowScene(primaryStage, root, 800, 600); 
-        
+        root.getChildren().addAll(Functions.welcomePane(), loginTypeBox,
+                usernameBox, loginButton, signUpLink, errorMessage);
+        Functions.setupAndShowScene(primaryStage, root, 800, 600);
+
         loginButton.setOnAction(e -> {
             TextField usernameField = (TextField) usernameBox.getChildren().get(1);
             String username = usernameField.getText();
             String loginType = loginTypeChoiceBox.getValue();
 
             if (authenticate(username, loginType)) {
-                if (loginType.equals("Staff")) { 
+                if (loginType.equals("Staff")) {
+
                     Restaurant restaurant = new Restaurant();
                     restaurant.start(primaryStage);
                 } else {
@@ -73,26 +73,23 @@ public class Login {
                 errorMessage.setText(INVALID_USERNAME);
             }
 
-            
         });
     }
 
     private boolean authenticate(String username, String loginType) {
         String tableName = (loginType.equals("Customer")) ? "customers" : "staffs";
         String query = "SELECT * FROM " + tableName + " WHERE first_name = ?";
-        
-        try (Connection connection = Functions.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        try (Connection connection = Functions.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next(); 
+                return resultSet.next();
+
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println(FAILED_AUTHENTICATE);
-            return false; 
+            return false;
+
         }
     }
 }
-
-

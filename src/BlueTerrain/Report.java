@@ -1,13 +1,11 @@
-package BlueTerrain;
+package Bluetrain;
+
+import javafx.stage.Stage;
 
 public abstract class Report {
 
-    protected Orders orders;
-
-    public Report(Orders orders) {
-        this.orders = orders;
-    }
-
     public abstract void generateReport();
+
+    public abstract void showReport(Stage primaryStage);
 
 }

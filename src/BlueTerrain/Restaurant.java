@@ -1,4 +1,4 @@
-package BlueTerrain;
+package Bluetrain;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,7 +21,7 @@ public class Restaurant {
         VBox root = Functions.createRootVBox();
         root.setAlignment(Pos.TOP_CENTER);
 
-        StackPane lightBluePadding = Functions.restuarantLabel();
+        StackPane lightBluePadding = Functions.welcomePane();
 
         Label openingHoursLabel = new Label("Opening Hours: 11:00 AM - 12:00 PM");
         openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
@@ -31,7 +31,8 @@ public class Restaurant {
         VBox centreBox = createButtonVBox(Color.ORANGE, "ORDERS", "TABLES", "STAFFS");
         VBox rightBox = createButtonVBox(Color.GREENYELLOW, "DELIVERY", "REPORTS", "HISTORY");
 
-        HBox buttonsBox = new HBox(50); 
+        HBox buttonsBox = new HBox(50);
+
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
 
@@ -43,6 +44,9 @@ public class Restaurant {
 
         Button staffButton = (Button) centreBox.getChildren().get(2); // Get the MENU button
         staffButton.setOnAction(e -> Staff.showStaffPopup(primaryStage));
+
+        Button reportButton = (Button) centreBox.getChildren().get(1); // Get Reports button.
+        reportButton.setOnAction(e -> new ReportSelectionScreen().start(primaryStage));
     }
 
     private Button createButton(String text, Color bgColor) {
@@ -59,7 +63,7 @@ public class Restaurant {
         VBox box = new VBox(20);
         box.setAlignment(Pos.CENTER);
         box.setPadding(new Insets(20));
-        
+
         for (String label : buttonLabels) {
             Button button = createButton(label, color);
             box.getChildren().add(button);

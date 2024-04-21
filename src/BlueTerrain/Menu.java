@@ -1,4 +1,5 @@
-package BlueTerrain;
+package Bluetrain;
+
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -6,7 +7,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -64,25 +64,25 @@ public class Menu {
         VBox root = Functions.createRootVBox();
         root.setAlignment(Pos.TOP_CENTER);
 
-        StackPane lightBluePadding = Functions.restuarantLabel();
+        StackPane lightBluePadding = Functions.welcomePane();
 
-        Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
-        Button fishMenuButton = Functions.createButtonMenu("FISH MENU", Color.LAVENDER);
-        Button grillMeatButton = Functions.createButtonMenu("GRILL & MEAT", Color.LAVENDER);
-        Button veganButton = Functions.createButtonMenu("VEGAN", Color.LAVENDER);
-        Button pitButton = Functions.createButtonMenu("FRIED MEAT", Color.LAVENDER);
-        Button dessertsButton = Functions.createButtonMenu("CHEF'S SPECIAL", Color.LAVENDER);
+        Button startersButton = Functions.createButton("STARTERS");
+        Button fishMenuButton = Functions.createButton("FISH MENU");
+        Button grillMeatButton = Functions.createButton("GRILL & MEAT");
+        Button veganButton = Functions.createButton("VEGAN");
+        Button pitButton = Functions.createButton("FRIED MEAT");
+        Button dessertsButton = Functions.createButton("CHEF'S SPECIAL");
 
-        Functions.setTooltipMenu(startersButton, STARTER);
-        Functions.setTooltipMenu(fishMenuButton, FISH_MENU);
-        Functions.setTooltipMenu(grillMeatButton, GRILL_MEAT);
-        Functions.setTooltipMenu(veganButton, VEGAN);
-        Functions.setTooltipMenu(pitButton, FRIED_MEAT);
-        Functions.setTooltipMenu(dessertsButton, "Chef Special");
+        Functions.setTooltip(startersButton, STARTER);
+        Functions.setTooltip(fishMenuButton, FISH_MENU);
+        Functions.setTooltip(grillMeatButton, GRILL_MEAT);
+        Functions.setTooltip(veganButton, VEGAN);
+        Functions.setTooltip(pitButton, FRIED_MEAT);
+        Functions.setTooltip(dessertsButton, "Chef Special");
 
-        VBox leftBox = Functions.createButtonVBoxMenu(startersButton, fishMenuButton);
-        VBox centreBox = Functions.createButtonVBoxMenu(grillMeatButton, pitButton);
-        VBox rightBox = Functions.createButtonVBoxMenu(veganButton, dessertsButton);
+        VBox leftBox = Functions.createButtonVBox(startersButton, fishMenuButton);
+        VBox centreBox = Functions.createButtonVBox(grillMeatButton, pitButton);
+        VBox rightBox = Functions.createButtonVBox(veganButton, dessertsButton);
 
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);

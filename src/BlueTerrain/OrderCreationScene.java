@@ -1,4 +1,5 @@
-package BlueTerrain;
+package Bluetrain;
+
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,11 +21,9 @@ public class OrderCreationScene extends Application {
         Button submitOrderButton = new Button("Submit Order");
         submitOrderButton.setOnAction(e -> {
             String[] menuItems = menuItemsInput.getText().split(",");
-            Orders newOrder = new Orders();
-            newOrder.setOrder(menuItems);
+            Order newOrder = new Order();
             // Here you would add the order to your application's orders collection
             // And possibly switch back to the OrdersListScene to show the updated list
-            System.out.println("Order Submitted: " + newOrder.getOrder());
         });
 
         root.getChildren().addAll(menuItemsInput, submitOrderButton);
@@ -35,7 +34,4 @@ public class OrderCreationScene extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

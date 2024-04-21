@@ -1,4 +1,4 @@
-package BlueTerrain;
+package Bluetrain;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -30,7 +30,4 @@ public class OrdersListScene extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
