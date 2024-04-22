@@ -26,6 +26,8 @@ public class Login {
     private static String ENTER_USERNAME = "Enter your username";
     private static String INVALID_USERNAME = "Invalid username.";
     private static String FAILED_AUTHENTICATE = "Error: Failed to authenticate user";
+    private static String CUSTOMER = "Customer";
+    private static String STAFF = "Staff";
 
     public void start(Stage primaryStage) {
         VBox root = Functions.createRootVBox();
