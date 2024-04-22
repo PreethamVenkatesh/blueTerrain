@@ -1,8 +1,12 @@
-package Bluetrain;
+package BlueTerrain;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,28 +26,23 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+import javafx.stage.StageStyle;
+
 
 public class Functions {
 
     public static Connection getConnection() {
         Connection connection = null;
         try {
-            // JDBC URL, username, and password of MySQL server
             String JDBC_URL = "jdbc:mysql://localhost:3306/BlueTerrain_Restaurant";
             String USERNAME = "root";
             String PASSWORD = "";
 
             connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
-            if (connection != null) {
-                System.out.println("DB Connection successful");
-            } else {
-                System.out.println("Unsuccessful");
-            }
         } catch (SQLException e) {
             e.printStackTrace();
-            // Handle connection error
             System.err.println("Failed to connect to database: " + e.getMessage());
         }
         return connection;
@@ -54,16 +53,16 @@ public class Functions {
         StackPane lightBluePadding = new StackPane();
         lightBluePadding.setBackground(new Background(new BackgroundFill(lightBlue, CornerRadii.EMPTY, Insets.EMPTY)));
         lightBluePadding.setPadding(new Insets(10));
-
+        
         Label welcomeLabel = new Label("Welcome to BlueTerrain");
         welcomeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
         welcomeLabel.setStyle("-fx-text-fill: darkblue;");
-
+        
         lightBluePadding.getChildren().add(welcomeLabel);
 
         return lightBluePadding;
     }
-
+    
     public static HBox createLabeledField(String labelText, String promptText) {
         HBox box = new HBox(10);
         Label label = new Label(labelText);
@@ -98,53 +97,12 @@ public class Functions {
         return button;
     }
 
-    public static Button createStyledButton(String text) {
-        Button button = new Button(text);
-        button.setStyle("-fx-background-color: #0078D7; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10px 20px; -fx-border-radius: 5px; -fx-background-radius: 5px;");
-        button.setMaxWidth(Double.MAX_VALUE);
-        button.setMaxHeight(Double.MAX_VALUE);
-        return button;
-    }
-
     public static VBox createRootVBox() {
         VBox root = new VBox();
         root.setAlignment(Pos.CENTER);
-        root.setSpacing(10);
+        root.setSpacing(10); 
         root.setPadding(new Insets(20));
         return root;
-    }
-
-    public static VBox createButtonVBox(Button... buttons) {
-        VBox buttonBox = new VBox(10);
-        buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.setPadding(new Insets(15));
-
-        for (Button button : buttons) {
-            VBox.setMargin(button, new Insets(5, 0, 5, 0));
-            button.setMinWidth(150);
-            button.setFont(new Font("Arial", 16));
-            buttonBox.getChildren().add(button);
-        }
-
-        return buttonBox;
-    }
-
-    public static void setTooltip(Button button, String menuText) {
-        Tooltip tooltip = new Tooltip(menuText);
-        tooltip.setWrapText(true);
-        tooltip.setMaxWidth(300);
-        tooltip.setShowDelay(Duration.millis(100));
-        tooltip.setHideDelay(Duration.millis(5000));
-        tooltip.setStyle("-fx-font-size: 12;");
-
-        button.setTooltip(tooltip);
-    }
-
-    public static Label createLabel(String text) {
-        Label label = new Label(text);
-        label.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        label.setStyle("-fx-text-fill: darkblue;");
-        return label;
     }
 
     public static void setupAndShowScene(Stage primaryStage, Parent root, int width, int height) {
@@ -152,4 +110,125 @@ public class Functions {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    public static StackPane restuarantLabel() {
+        Color lightBlue = Color.rgb(173, 216, 230);
+        
+        StackPane stackPane = new StackPane();
+        stackPane.setBackground(new Background(new BackgroundFill(lightBlue, CornerRadii.EMPTY, Insets.EMPTY)));
+        stackPane.setPadding(new Insets(10));
+        
+        Label label = new Label("BlueTerrain");
+        label.setFont(Font.font("Arial", FontWeight.BOLD, 25));
+        label.setStyle("-fx-text-fill: darkblue;");
+        
+        stackPane.getChildren().add(label);
+        
+        return stackPane;
+    }
+
+    public static VBox createButtonVBoxMenu(Button... buttons) {
+        VBox box = new VBox(20);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(20));
+        box.getChildren().addAll(buttons);
+        return box;
+    }
+
+    public static void setTooltipMenu(Button button, String tooltipText) {
+        Tooltip tooltip = new Tooltip(tooltipText);
+        tooltip.setAutoHide(false);
+        button.setTooltip(tooltip);
+    }
+
+    public static Button createButtonMenu(String text, Color bgColor) {
+        Button button = new Button(text);
+        button.setFont(Font.font(18));
+        button.setTextFill(Color.DARKBLUE);
+        button.setBackground(new Background(new BackgroundFill(bgColor, CornerRadii.EMPTY, Insets.EMPTY)));
+        button.setPrefSize(150, 150);
+
+        button.setOnMouseEntered(event -> {
+            Button sourceButton = (Button) event.getSource();
+            Tooltip tooltip = (Tooltip) sourceButton.getTooltip();
+            if (tooltip != null) {
+                tooltip.show(sourceButton, event.getScreenX(), event.getScreenY() + 15);
+            }
+        });
+
+        button.setOnMouseExited(event -> {
+            Button sourceButton = (Button) event.getSource();
+            Tooltip tooltip = (Tooltip) sourceButton.getTooltip();
+            if (tooltip != null) {
+                tooltip.hide();
+            }
+        });
+
+        return button;
+    }
+
+    public static void setTooltip(Button button, ArrayList<String> tooltipTextList) {
+        if (!tooltipTextList.isEmpty()) {
+            StringBuilder tooltipText = new StringBuilder();
+            for (String name : tooltipTextList) {
+                tooltipText.append(name).append("\n");
+            }
+            Tooltip tooltip = new Tooltip(tooltipText.toString());
+            tooltip.setAutoHide(false);
+            button.setTooltip(tooltip);
+        }
+    }
+
+    public static ArrayList<String> fetchDBdata(String itemType, String query) {        
+        ArrayList<String> tooltipTextList = new ArrayList<>();
+        try (Connection connection = Functions.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            
+            preparedStatement.setString(1, itemType);
+            
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    String value = resultSet.getString("result_column");
+                    tooltipTextList.add(value);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to fetch names");
+        }
+        
+        return tooltipTextList;
+    }
+
+    public static Stage createPopupWindow(Stage primaryStage) {
+        Stage menuPopup = new Stage();
+        menuPopup.initOwner(primaryStage);
+        menuPopup.initStyle(StageStyle.UTILITY);
+        menuPopup.initModality(Modality.APPLICATION_MODAL);
+        return menuPopup;
+    }
+
+    public static Button createButton1(String text, Color bgColor) {
+        Button button = new Button(text);
+        button.setFont(Font.font(18));
+        button.setTextFill(Color.DARKBLUE);
+        button.setBackground(new Background(new BackgroundFill(bgColor, CornerRadii.EMPTY, Insets.EMPTY)));
+        button.setPrefWidth(150);
+        button.setPrefHeight(150);
+        return button;
+    }
+
+    public static VBox createButtonVBox(Color color, String... buttonLabels) {
+        VBox box = new VBox(20);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(20));
+        
+        for (String label : buttonLabels) {
+            Button button = createButton1(label, color);
+            box.getChildren().add(button);
+        }
+        return box;
+    }
+
+
 }
