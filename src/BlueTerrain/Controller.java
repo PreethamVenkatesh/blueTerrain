@@ -1,4 +1,4 @@
-package Bluetrain;
+package BlueTerrain;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
