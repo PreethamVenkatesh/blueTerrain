@@ -1,4 +1,4 @@
-package Bluetrain;
+package BlueTerrain;
 
 import javafx.stage.Stage;
 
