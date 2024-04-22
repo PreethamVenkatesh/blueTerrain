@@ -1,8 +1,4 @@
-package Bluetrain;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+package BlueTerrain;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -101,12 +97,13 @@ public class Signup {
                     preparedStatement.setString(4, address);
                     preparedStatement.executeUpdate();
                 } else {
-                    String query = "INSERT INTO " + tableName + " (first_name, last_name, email, profile_type) VALUES (?, ?, ?, ?)";
+                    String query = "INSERT INTO " + tableName + " (first_name, last_name, email, profile_type, isApproved) VALUES (?, ?, ?, ?, ?)";
                     PreparedStatement preparedStatement = connection.prepareStatement(query);
                     preparedStatement.setString(1, firstName);
                     preparedStatement.setString(2, lastName);
                     preparedStatement.setString(3, email);
                     preparedStatement.setString(4, profileType);
+                    preparedStatement.setBoolean(5, false);
                     preparedStatement.executeUpdate();
                 }   
                 System.out.println("User signed up successfully!");
