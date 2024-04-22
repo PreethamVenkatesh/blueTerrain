@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -33,6 +32,9 @@ import javafx.stage.StageStyle;
 
 public class Functions {
 
+    private static String OPENING_HOURS = "Opening Hours: 11:00 AM - 12:00 PM";
+    private static String BLUE_TERRAIN = "Welcome to BlueTerrain";
+
     public static Connection getConnection() {
         Connection connection = null;
         try {
@@ -54,7 +56,7 @@ public class Functions {
         lightBluePadding.setBackground(new Background(new BackgroundFill(lightBlue, CornerRadii.EMPTY, Insets.EMPTY)));
         lightBluePadding.setPadding(new Insets(10));
         
-        Label welcomeLabel = new Label("Welcome to BlueTerrain");
+        Label welcomeLabel = new Label(BLUE_TERRAIN);
         welcomeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
         welcomeLabel.setStyle("-fx-text-fill: darkblue;");
         
@@ -230,5 +232,11 @@ public class Functions {
         return box;
     }
 
+    public static Label openingHours() {
+        Label openingHoursLabel = new Label(OPENING_HOURS);
+        openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+        openingHoursLabel.setStyle("-fx-text-fill: darkblue;");
+        return openingHoursLabel;
+    }
 
 }
