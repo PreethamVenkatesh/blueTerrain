@@ -1,4 +1,4 @@
-package Bluetrain;
+package BlueTerrain;
 
 import java.util.List;
 import javafx.collections.FXCollections;
