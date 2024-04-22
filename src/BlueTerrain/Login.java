@@ -62,10 +62,12 @@ public class Login {
             String loginType = loginTypeChoiceBox.getValue();
 
             if (authenticate(username, loginType)) {
-                if (loginType.equals("Staff")) {
-
+                if (loginType.equals(STAFF)) { 
                     Restaurant restaurant = new Restaurant();
                     restaurant.start(primaryStage);
+                } else if (loginType.equals(CUSTOMER)) {
+                    Bookings bookings = new Bookings();
+                    bookings.start(primaryStage);
                 } else {
                     errorMessage.setText("Customer login development in progress");
                 }
