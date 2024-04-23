@@ -92,21 +92,28 @@ public class Login {
             preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    String firstName = resultSet.getString("first_name");
-                    String lastName = resultSet.getString("last_name");
-                    String profileType = resultSet.getString("profile_type");
                     if (loginType.equals(STAFF)) {
-                        boolean approved = resultSet.getBoolean("isApproved");
-                        return new String[]{firstName, lastName, profileType, String.valueOf(approved)};
+                        String firstName = resultSet.getString("first_name");
+                        String lastName = resultSet.getString("last_name");
+                        String profileType = resultSet.getString("profile_type");
+                        if (loginType.equals(STAFF)) {
+                            boolean approved = resultSet.getBoolean("isApproved");
+                            return new String[]{firstName, lastName, profileType, String.valueOf(approved)};
+                        }
+                        return new String[]{firstName, lastName, profileType};
+                    } else {
+                        String firstName = resultSet.getString("first_name");
+                        String lastName = resultSet.getString("last_name");
+                        return new String[]{firstName, lastName, ""};
                     }
-                    return new String[]{firstName, lastName, profileType};
+                    
                 } else {
-                    return null; // Username does not exist in the database
+                    return null; 
                 } 
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            System.err.println("Error: Failed to authenticate user - " + ex.getMessage()); // Print the exception message
+            System.err.println("Error: Failed to authenticate user - " + ex.getMessage()); 
             return null; 
         }
     }
