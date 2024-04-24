@@ -1,13 +1,13 @@
 {
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "c:\\Users\\Likita\\javafx-sdk-22\\lib\\javafx.base.jar",
-        "c:\\Users\\Likita\\javafx-sdk-22\\lib\\javafx.controls.jar",
-        "c:\\Users\\Likita\\javafx-sdk-22\\lib\\javafx.fxml.jar",
-        "c:\\Users\\Likita\\javafx-sdk-22\\lib\\javafx.graphics.jar",
-        "c:\\Users\\Likita\\javafx-sdk-22\\lib\\javafx.media.jar",
-        "c:\\Users\\Likita\\javafx-sdk-22\\lib\\javafx.swing.jar",
-        "c:\\Users\\Likita\\javafx-sdk-22\\lib\\javafx.web.jar",
-        "c:\\Users\\Likita\\javafx-sdk-22\\lib\\javafx-swt.jar"
+        "C:\\Users\\Aravind\\Downloads\\openjfx-17.0.10_windows-x64_bin-sdk\\javafx-sdk-17.0.10\\lib\\javafx.base.jar",
+        "C:\\Users\\Aravind\\Downloads\\openjfx-17.0.10_windows-x64_bin-sdk\\javafx-sdk-17.0.10\\lib\\javafx.controls.jar",
+        "C:\\Users\\Aravind\\Downloads\\openjfx-17.0.10_windows-x64_bin-sdk\\javafx-sdk-17.0.10\\lib\\javafx.fxml.jar",
+        "C:\\Users\\Aravind\\Downloads\\openjfx-17.0.10_windows-x64_bin-sdk\\javafx-sdk-17.0.10\\lib\\javafx.graphics.jar",
+        "C:\\Users\\Aravind\\Downloads\\openjfx-17.0.10_windows-x64_bin-sdk\\javafx-sdk-17.0.10\\lib\\javafx.media.jar",
+        "C:\\Users\\Aravind\\Downloads\\openjfx-17.0.10_windows-x64_bin-sdk\\javafx-sdk-17.0.10\\lib\\javafx.swing.jar",
+        "C:\\Users\\Aravind\\Downloads\\openjfx-17.0.10_windows-x64_bin-sdk\\javafx-sdk-17.0.10\\lib\\javafx.web.jar",
+        "C:\\Users\\Aravind\\Downloads\\openjfx-17.0.10_windows-x64_bin-sdk\\javafx-sdk-17.0.10\\lib\\javafx-swt.jar"
     ]
 }

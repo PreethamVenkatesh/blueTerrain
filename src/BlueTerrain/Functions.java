@@ -38,7 +38,7 @@ public class Functions {
     public static Connection getConnection() {
         Connection connection = null;
         try {
-            String JDBC_URL = "jdbc:mysql://localhost:3306/BlueTerrain_Restaurant";
+            String JDBC_URL = "jdbc:mysql://localhost:3306/cafedb";
             String USERNAME = "root";
             String PASSWORD = "";
 
