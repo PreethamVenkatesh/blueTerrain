@@ -7,6 +7,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -70,9 +71,21 @@ public class Bookings extends Application {
         inputLayout.getChildren().addAll(tableNumberLabel, tableNumberField, guestsLabel, guestsField,
                 durationLabel, durationField, addButton);
 
+        // Set VBox style to add blue shadow
+        inputLayout.setStyle("-fx-background-color: white; -fx-padding: 10px; -fx-effect: dropshadow(three-pass-box, blue, 10, 0, 0, 0);");
+
+        // Set alignment to center
+        inputLayout.setAlignment(Pos.CENTER);
+
         // Create a layout to hold the input layout and bookings table
         HBox root = new HBox(10);
         root.getChildren().addAll(inputLayout, bookingsTable);
+
+        // Set HBox style to add blue shadow
+        root.setStyle("-fx-background-color: white; -fx-padding: 20px; -fx-effect: dropshadow(three-pass-box, blue, 10, 0, 0, 0);");
+
+        // Set alignment to center
+        root.setAlignment(Pos.CENTER);
 
         // Create the scene with the layout
         Scene scene = new Scene(root, 800, 400);
@@ -112,22 +125,14 @@ public class Bookings extends Application {
         }
 
         public String getTableNumber() {
-            return tableNumber;
+           
+
+ return tableNumber;
         }
+        
         public IntegerProperty guestsProperty() {
             return new SimpleIntegerProperty(guests);
         }
-        
-        
-        public int getGuests() {
-            return guests;
-        }
-
-        public String getDuration() {
-            return duration;
-        }
-
-        // Properties for JavaFX binding
         public StringProperty bookingIDProperty() {
             return new SimpleStringProperty(bookingID);
         }
@@ -144,4 +149,5 @@ public class Bookings extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }
