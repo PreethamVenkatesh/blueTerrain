@@ -18,9 +18,37 @@ public class Bookings extends Application {
     // Data model for bookings
     private ObservableList<Booking> bookingsData = FXCollections.observableArrayList();
 
-    @SuppressWarnings("unchecked")
     @Override
     public void start(Stage primaryStage) {
+        // Create the main scene with two buttons
+        Button createButton = new Button("Create Bookings");
+        Button viewButton = new Button("View My Bookings");
+
+        VBox mainLayout = new VBox(20, createButton, viewButton);
+        mainLayout.setAlignment(Pos.CENTER);
+
+        Scene mainScene = new Scene(mainLayout, 400, 200);
+
+        // Event handling for the createButton
+        createButton.setOnAction(e -> {
+            // Switch to the create bookings scene
+            primaryStage.setScene(createBookingsScene(primaryStage));
+        });
+
+        // Event handling for the viewButton
+        viewButton.setOnAction(e -> {
+            // Switch to the view bookings scene
+            // Code to implement this functionality goes here
+        });
+
+        // Set the main scene to the stage
+        primaryStage.setScene(mainScene);
+        primaryStage.setTitle("Table Booking Screen");
+        primaryStage.show();
+    }
+
+    // Method to create the scene for creating bookings
+    private Scene createBookingsScene(Stage primaryStage) {
         // Create labels and text fields for input
         Label tableNumberLabel = new Label("Table Number:");
         TextField tableNumberField = new TextField();
@@ -43,67 +71,39 @@ public class Bookings extends Application {
             Booking booking = new Booking(bookingID, tableNumber, guests, duration);
             bookingsData.add(booking);
 
+            // Show confirmation message
+            showAlert("Booking Confirmed", "Your booking is confirmed!");
+
             // Clear input fields
             tableNumberField.clear();
             guestsField.clear();
             durationField.clear();
         });
 
-        TableColumn<Booking, String> bookingIDCol = new TableColumn<>("Booking ID");
-        bookingIDCol.setCellValueFactory(cellData -> cellData.getValue().bookingIDProperty());
-
-        TableColumn<Booking, String> tableNumberCol = new TableColumn<>("Table Number");
-        tableNumberCol.setCellValueFactory(cellData -> cellData.getValue().tableNumberProperty());
-
-       //TableColumn<Booking, Integer> guestsCol = new TableColumn<>("Guests");
-        //guestsCol.setCellValueFactory(cellData -> cellData.getValue().guestsProperty().asString());
-
-        TableColumn<Booking, String> durationCol = new TableColumn<>("Duration");
-        durationCol.setCellValueFactory(cellData -> cellData.getValue().durationProperty());
-
-        // Create a TableView for displaying bookings
-        TableView<Booking> bookingsTable = new TableView<>();
-        bookingsTable.setItems(bookingsData);
-        bookingsTable.getColumns().addAll(bookingIDCol, tableNumberCol,  durationCol);
-
         // Create a layout to hold the input fields and button
         VBox inputLayout = new VBox(10);
         inputLayout.getChildren().addAll(tableNumberLabel, tableNumberField, guestsLabel, guestsField,
                 durationLabel, durationField, addButton);
-
-        // Set VBox style to add blue shadow
-        inputLayout.setStyle("-fx-background-color: white; -fx-padding: 10px; -fx-effect: dropshadow(three-pass-box, blue, 10, 0, 0, 0);");
-
-        // Set alignment to center
         inputLayout.setAlignment(Pos.CENTER);
 
-        // Create a layout to hold the input layout and bookings table
-        HBox root = new HBox(10);
-        root.getChildren().addAll(inputLayout, bookingsTable);
-
-        // Set HBox style to add blue shadow
-        root.setStyle("-fx-background-color: white; -fx-padding: 20px; -fx-effect: dropshadow(three-pass-box, blue, 10, 0, 0, 0);");
-
-        // Set alignment to center
-        root.setAlignment(Pos.CENTER);
-
-        // Create the scene with the layout
-        Scene scene = new Scene(root, 800, 400);
-
-        // Set the scene to the stage
-        primaryStage.setScene(scene);
-
-        // Set the title of the stage
-        primaryStage.setTitle("Table Booking Screen");
-
-        // Show the stage
-        primaryStage.show();
+        // Create the scene for creating bookings
+        Scene createBookingsScene = new Scene(inputLayout, 400, 300);
+        return createBookingsScene;
     }
 
     // Method to generate a unique booking ID
     private String generateBookingID() {
         // Implement your own logic to generate a unique ID using UUID
         return java.util.UUID.randomUUID().toString();
+    }
+
+    // Method to show an alert dialog
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     // Booking class to represent a booking
@@ -125,21 +125,20 @@ public class Bookings extends Application {
         }
 
         public String getTableNumber() {
-           
-
- return tableNumber;
+            return tableNumber;
         }
-        
+
         public IntegerProperty guestsProperty() {
             return new SimpleIntegerProperty(guests);
         }
+
         public StringProperty bookingIDProperty() {
             return new SimpleStringProperty(bookingID);
         }
 
         public StringProperty tableNumberProperty() {
             return new SimpleStringProperty(tableNumber);
-        }       
+        }
 
         public StringProperty durationProperty() {
             return new SimpleStringProperty(duration);
@@ -149,5 +148,4 @@ public class Bookings extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
 }
