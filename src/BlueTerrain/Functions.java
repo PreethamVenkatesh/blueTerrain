@@ -232,6 +232,17 @@ public class Functions {
         return box;
     }
 
+     public static VBox createButtonVBoxFields(Color color, String buttonLabel) {
+        VBox box = new VBox(20);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(20));
+
+        Button button = createButton1(buttonLabel, color);
+        button.setWrapText(true); // Enable text wrapping
+        box.getChildren().add(button);
+        return box;
+    }
+    
     public static Label openingHours() {
         Label openingHoursLabel = new Label(OPENING_HOURS);
         openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
