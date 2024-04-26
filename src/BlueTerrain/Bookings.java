@@ -2,7 +2,6 @@ package BlueTerrain;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -13,12 +12,12 @@ public class Bookings {
         VBox root = Functions.createRootVBox();
         root.setAlignment(Pos.TOP_CENTER);
 
-        StackPane lightBluePadding = Functions.restuarantLabel();
+        
 
         Label openingHoursLabel = Functions.openingHours();
 
-        root.getChildren().addAll(lightBluePadding, openingHoursLabel);
-        Functions.setupAndShowScene(primaryStage, root, 800, 600);
+        root.getChildren().addAll(Functions.welcomePane(), openingHoursLabel);
+        Functions.setupAndShowScene(primaryStage, root);
     }
     
 }
