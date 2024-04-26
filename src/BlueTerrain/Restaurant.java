@@ -40,9 +40,9 @@ public class Restaurant {
 
         Label openingHoursLabel = Functions.openingHours();
 
-        VBox leftBox = Functions.createButtonVBox(Color.YELLOW, "BOOKINGS", "MANAGEMENT", "MENU");
-        VBox centreBox = Functions.createButtonVBox(Color.ORANGE, "ORDERS", "TABLES", "STAFFS");
-        VBox rightBox = Functions.createButtonVBox(Color.GREENYELLOW, "DELIVERY", "REPORTS", "HISTORY");
+        VBox leftBox = Functions.createButtonVBox(Color.YELLOW, "BOOKINGS", "MANAGEMENT");
+        VBox centreBox = Functions.createButtonVBox(Color.ORANGE, "MENU", "STAFFS");
+        VBox rightBox = Functions.createButtonVBox(Color.GREENYELLOW, "ORDERS", "REPORTS");
 
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
@@ -51,14 +51,11 @@ public class Restaurant {
         root.getChildren().addAll(Functions.welcomePane(), userDetailsBox, openingHoursLabel, buttonsBox, currentTimeBox);
         Functions.setupAndShowScene(primaryStage, root);
 
-        Button menuButton = (Button) leftBox.getChildren().get(2); 
+        Button menuButton = (Button) centreBox.getChildren().get(0); 
         menuButton.setOnAction(e -> Menu.showMenu(primaryStage));
 
-        Button staffButton = (Button) centreBox.getChildren().get(2); 
+        Button staffButton = (Button) centreBox.getChildren().get(1); 
         staffButton.setOnAction(e -> Staff.showStaffPopup(primaryStage));
-
-        Button tablesButton = (Button) centreBox.getChildren().get(1); 
-        tablesButton.setOnAction(e -> Tables.showTablesPopup(primaryStage));
 
         Button managementButton = (Button) leftBox.getChildren().get(1);
         managementButton.setOnAction(e -> Management.showManagementPopup(primaryStage));
