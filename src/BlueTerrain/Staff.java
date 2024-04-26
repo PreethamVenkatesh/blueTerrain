@@ -4,7 +4,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -18,8 +17,6 @@ public class Staff {
 
         VBox root = Functions.createRootVBox();
         root.setAlignment(Pos.TOP_CENTER);
-
-        StackPane lightBluePadding = Functions.restuarantLabel();
 
         Button managerButton = Functions.createButtonMenu("MANAGERS", Color.LAVENDER);
         Button chefButton = Functions.createButtonMenu("CHEFS", Color.LAVENDER);
@@ -45,7 +42,7 @@ public class Staff {
             primaryStage.show();
         });
 
-        root.getChildren().addAll(lightBluePadding, buttonsBox, closeButton);
+        root.getChildren().addAll(buttonsBox, closeButton);
         Scene scene = new Scene(root, 750, 550);
         staffPopup.setScene(scene);
         staffPopup.showAndWait();

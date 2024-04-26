@@ -5,12 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -19,6 +21,14 @@ import javafx.stage.Stage;
 public class Signup {
     public void start(Stage primaryStage, String defaultSignupType) {
         VBox root = Functions.createRootVBox();
+        root.setAlignment(Pos.TOP_CENTER);
+        
+        Background background = Functions.backGroundImage("/BlueTerrain/Images/BT_Signup.jpg");
+        root.setBackground(background);
+
+        Label signupLabel = new Label("Are you here for the first time? Signup below");
+        signupLabel.setFont(new Font(20)); 
+        signupLabel.setStyle("-fx-text-fill: white;");
 
         HBox firstNameBox = Functions.createLabeledField("First Name", "Enter your First Name");
         HBox lastNameBox = Functions.createLabeledField("Last Name", "Enter your Last Name");
@@ -26,11 +36,11 @@ public class Signup {
         HBox emailBox = Functions.createLabeledField("Email ID      ", "Enter your Email ID");
         Button signUpButton = Functions.createButton("Sign Up");
 
-        HBox signupTypeBox = new HBox(10);
-        signupTypeBox.setAlignment(Pos.CENTER);
+        HBox signupTypeBox = new HBox(20);
+        signupTypeBox.setAlignment(Pos.TOP_CENTER);
         Label signUpTypeLabel = new Label("Select Signup Type");
         signUpTypeLabel.setFont(new Font(15));
-        signUpTypeLabel.setStyle("-fx-text-fill: black;");
+        signUpTypeLabel.setStyle("-fx-text-fill: white;");
         ChoiceBox<String> signUpTypeChoiceBox = new 
             ChoiceBox<>(FXCollections.observableArrayList("Customer", "Staff"));
         signUpTypeChoiceBox.getSelectionModel().select(defaultSignupType); 
@@ -41,12 +51,28 @@ public class Signup {
         profileTypeBox.setAlignment(Pos.CENTER);
         Label profileTypeLabel = new Label("Select Profile Type");
         profileTypeLabel.setFont(new Font(15));
-        profileTypeLabel.setStyle("-fx-text-fill: black;");
+        profileTypeLabel.setStyle("-fx-text-fill: white;");
         ChoiceBox<String> profileTypeChoiceBox = new 
             ChoiceBox<>(FXCollections.observableArrayList("Waiter", "Chef", "Delivery Driver", "Manager"));
         profileTypeChoiceBox.getSelectionModel().selectFirst(); 
         profileTypeChoiceBox.setStyle("-fx-text-fill: black;");
         profileTypeBox.getChildren().addAll(profileTypeLabel, profileTypeChoiceBox);
+
+        Hyperlink loginLink = new Hyperlink("Return to Login page");
+        loginLink.setFont(new Font(15));
+        loginLink.setOnAction(e -> {
+            primaryStage.close();
+                Login login = new Login();
+                login.start(new Stage());
+        });
+
+        Functions.setMarginForNode(root, signupTypeBox, new Insets(20, 20, 20, 0));
+        Functions.setMarginForNode(root, firstNameBox, new Insets(10, 10, 10, 0));
+        Functions.setMarginForNode(root, lastNameBox, new Insets(10, 10, 10, 0));
+        Functions.setMarginForNode(root, addressBox, new Insets(10, 10, 10, 0));
+        Functions.setMarginForNode(root, emailBox, new Insets(10, 10, 10, 0));
+        Functions.setMarginForNode(root, profileTypeBox, new Insets(20, 20, 20, 0));
+        Functions.setMarginForNode(root, signUpButton, new Insets(20, 20, 20, 0));
 
         signUpTypeChoiceBox.setOnAction(e -> {
             if (signUpTypeChoiceBox.getValue().equals("Customer")) {
@@ -55,8 +81,9 @@ public class Signup {
                 root.getChildren().remove(emailBox);
                 root.getChildren().remove(profileTypeBox);
                 root.getChildren().remove(signUpButton);
+                root.getChildren().remove(loginLink);
                 root.getChildren().addAll(firstNameBox, lastNameBox, 
-                                    emailBox, profileTypeBox, signUpButton);
+                                    emailBox, profileTypeBox, signUpButton, loginLink);
                 if (!root.getChildren().contains(addressBox)) {
                     root.getChildren().add(5, addressBox);
                 }
@@ -67,8 +94,9 @@ public class Signup {
                 root.getChildren().remove(emailBox);
                 root.getChildren().remove(addressBox);
                 root.getChildren().remove(signUpButton);
+                root.getChildren().remove(loginLink);
                 root.getChildren().addAll(firstNameBox, lastNameBox, 
-                        emailBox, profileTypeBox, signUpButton);
+                        emailBox, profileTypeBox, signUpButton, loginLink);
             }
         });
 
@@ -116,15 +144,9 @@ public class Signup {
             }
         });
 
-        Hyperlink loginLink = new Hyperlink("Return to Login page");
-        loginLink.setOnAction(e -> {
-            primaryStage.close();
-                Login login = new Login();
-                login.start(new Stage());
-        });
+        
 
-        root.getChildren().addAll(Functions.welcomePane(), signupTypeBox, firstNameBox, 
-                    lastNameBox, emailBox, addressBox, signUpButton, loginLink);
-        Functions.setupAndShowScene(primaryStage, root, 800, 600); 
+        root.getChildren().addAll(Functions.welcomePane(), signupLabel, signupTypeBox, firstNameBox, lastNameBox, emailBox, addressBox, signUpButton, loginLink);
+        Functions.setupAndShowScene(primaryStage, root); 
     }
 }
