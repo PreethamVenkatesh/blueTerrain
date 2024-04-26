@@ -1,6 +1,7 @@
 package BlueTerrain;
+
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -10,30 +11,28 @@ import javafx.stage.Stage;
 public class Management {
     public static void showManagementPopup(Stage primaryStage) {
 
-        Stage managementPopup = Functions.createPopupWindow(primaryStage);
-
         VBox root = Functions.createRootVBox();
         root.setAlignment(Pos.TOP_CENTER);
+        root.setBackground(Functions.backGroundImage("/BlueTerrain/Images/BT_Common.jpeg"));
 
-        VBox leftBox = Functions.createButtonVBoxFields(Color.YELLOW, "Dine-In");
-        VBox centreBox = Functions.createButtonVBoxFields(Color.YELLOW,"Take-Away");
-        VBox rightBox = Functions.createButtonVBoxFields(Color.YELLOW,"Booking Status");
+        Button dineInButton = Functions.createButtonMenu("Dine-In", Color.LAVENDER);
+        Button takeAwayButton = Functions.createButtonMenu("Take-Away", Color.LAVENDER);
+        Button bookingStatusButton = Functions.createButtonMenu("Booking Status", Color.LAVENDER);
 
-        HBox buttonsBox = new HBox(50); 
+        HBox buttonsBox = new HBox(40);
         buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
+        buttonsBox.getChildren().addAll(dineInButton, takeAwayButton, bookingStatusButton);
+
+        Functions.setMarginForNode(root, buttonsBox, new Insets(20, 20, 20, 0));
 
         Button closeButton = new Button("Close");
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
         closeButton.setOnAction(e -> {
-            managementPopup.close();
-            primaryStage.show();
+            Restaurant restaurant = new Restaurant();
+            restaurant.start(primaryStage, Menu.getFirstName(), Menu.getLastName(), Menu.getProfileType());
         });
 
         root.getChildren().addAll(Functions.welcomePane(), buttonsBox, closeButton);
-
-        Scene scene = new Scene(root, 750, 550);
-        managementPopup.setScene(scene);
-        managementPopup.showAndWait();
+        Functions.setupAndShowScene(primaryStage, root);
     }
 }
