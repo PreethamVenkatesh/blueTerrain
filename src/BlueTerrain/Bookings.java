@@ -1,207 +1,205 @@
 package BlueTerrain;
 
-import javafx.application.Application;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Comparator;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.sql.*;
 
 public class Bookings extends Application {
 
-    // JDBC connection parameters
-    String databaseName = "cafedb";
-    String USERNAME = "root";
-    String PASSWORD = "2360313";
-    String JDBC_URL = "jdbc:mysql://127.0.0.1:3306/" + databaseName;
+    private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
 
-    @Override
-    public void start(Stage primaryStage) {
-        // Create buttons for booking and viewing bookings
-        Button makeBookingButton = new Button("Make Booking");
-        Button viewBookingsButton = new Button("View Bookings");
+    public void start(Stage primaryStage, String firstName, String lastName) {
+        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
+        Label openingHoursLabel = Functions.openingHours();
 
-        // Event handling for make booking button
-        makeBookingButton.setOnAction(event -> {
-            // Switch to the booking scene
-            primaryStage.setScene(createBookingScene(primaryStage));
-        });
+        Label userDetailsLabel = new Label("HEY! " + firstName + "" + lastName + "\n\t" + "Our Place or Yours ?");
+        userDetailsLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 20;");
 
-        // Event handling for view bookings button
-        viewBookingsButton.setOnAction(event -> {
-            // Fetch and display bookings from the database
-            displayBookings(primaryStage);
-        });
+        Functions.setMarginForNode(root, userDetailsLabel, new Insets(20, 20, 20, 0));
+        
+        VBox leftBox = Functions.createButtonVBox(Color.LAVENDER, "BOOK TABLE");
+        VBox centreBox = Functions.createButtonVBox(Color.LAVENDER, "ORDER NOW");
+        VBox rightBox = Functions.createButtonVBox(Color.LAVENDER, "TAKE AWAY");
 
-        // Create the main layout
-        VBox mainLayout = new VBox(20);
-        mainLayout.setAlignment(Pos.CENTER);
-        mainLayout.getChildren().addAll(makeBookingButton, viewBookingsButton);
+        HBox buttonsBox = new HBox(50); 
+        buttonsBox.setAlignment(Pos.CENTER);
+        buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
 
-        // Create the main scene
-        Scene scene = new Scene(mainLayout, 400, 300);
+        Hyperlink myBookings = new Hyperlink("My Bookings");
+        myBookings.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20;");
 
-        // Set the scene to the stage
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("Booking Application");
-        primaryStage.show();
+        myBookings.setOnAction(e -> showBookingPopup(firstName, lastName));
+
+        Hyperlink myOrders = new Hyperlink("My Orders");
+        myOrders.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20;");
+
+        HBox hyperlinkBox = new HBox();
+        hyperlinkBox.getChildren().addAll(myBookings, myOrders);
+        hyperlinkBox.setAlignment(Pos.CENTER_RIGHT);
+        
+        root.getChildren().addAll(Functions.welcomePane(), openingHoursLabel, userDetailsLabel, buttonsBox, hyperlinkBox);
+        Functions.setupAndShowScene(primaryStage, root);
+
+        Button bookTableButton = (Button) leftBox.getChildren().get(0); 
+        bookTableButton.setOnAction(e -> bookTablePopup(firstName, lastName));
+
     }
 
-    // Method to create the booking scene
-    private Scene createBookingScene(Stage primaryStage) {
-        // Create labels and text fields for booking information
-        Label nameLabel = new Label("Customer Name:");
-        TextField nameField = new TextField();
-        Label guestsLabel = new Label("Number of Guests:");
-        TextField guestsField = new TextField();
-        Label durationLabel = new Label("Duration:");
-        TextField durationField = new TextField();
-        Label specialInstructionsLabel = new Label("Special Instructions:");
-        TextField specialInstructionsField = new TextField();
-
-        // Create a button to add the booking
-        Button addButton = new Button("Add Booking");
-        addButton.setOnAction(event -> {
-            // Get booking information from the form
-            String name = nameField.getText();
-            int guests = Integer.parseInt(guestsField.getText());
-            String duration = durationField.getText();
-            String specialInstructions = specialInstructionsField.getText();
-
-            // Save booking data to the database
-            saveBookingToDatabase(name, guests, duration, specialInstructions);
-
-            // Show a confirmation dialog
-            showAlert("Booking Confirmation", "Your booking has been submitted successfully!");
-
-            // Clear fields
-            nameField.clear();
-            guestsField.clear();
-            durationField.clear();
-            specialInstructionsField.clear();
-        });
-
-        // Create a back button
-        Button backButton = new Button("Back");
-        backButton.setOnAction(event -> {
-            // Switch back to the main scene
-            primaryStage.setScene(createMainScene(primaryStage));
-        });
-
-        // Create the booking layout
-        VBox bookingLayout = new VBox(20);
-        bookingLayout.setAlignment(Pos.CENTER);
-        bookingLayout.getChildren().addAll(
-                nameLabel, nameField,
-                guestsLabel, guestsField,
-                durationLabel, durationField,
-                specialInstructionsLabel, specialInstructionsField,
-                addButton, backButton
-        );
-
-        // Create the booking scene
-        return new Scene(bookingLayout, 400, 300);
-    }
-
-    // Method to save booking data to the database
-    private void saveBookingToDatabase(String name, int guests, String duration, String specialInstructions) {
-        try {
-            // Establish connection
-            Connection conn = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
-
-            // Create SQL query
-            String sql = "INSERT INTO bookings (name, guests, duration, special_instructions) VALUES (?, ?, ?, ?)";
-
-            // Create prepared statement
-            PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setString(1, name);
-            statement.setInt(2, guests);
-            statement.setString(3, duration);
-            statement.setString(4, specialInstructions);
-
-            // Execute the statement
-            statement.executeUpdate();
-
-            // Close connection and statement
-            statement.close();
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Error", "Failed to save booking data to the database.");
+    private void bookTablePopup(String firstName, String lastName) {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setTitle("Book Table");
+    
+        GridPane gridPane = new GridPane();
+        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(20));
+    
+        Label tableTypeLabel = new Label("Table Type:");
+        ComboBox<String> tableTypeComboBox = new ComboBox<>();
+        tableTypeComboBox.getItems().addAll("2 seats", "4 seats", "8 seats");
+    
+        Label dateLabel = new Label("Date:");
+        TextField dateTextField = new TextField();
+        dateTextField.setPromptText("yyyy-mm-dd");
+    
+        Label timeLabel = new Label("Time:");
+        ComboBox<String> timeComboBox = new ComboBox<>();
+        for (int hour = 11; hour <= 22; hour++) {
+            timeComboBox.getItems().add(String.format("%02d:00", hour)); 
         }
-    }
-
-    // Method to create the main scene
-    private Scene createMainScene(Stage primaryStage) {
-        // Add your code here to create the main scene
-        VBox mainLayout = new VBox(20);
-        mainLayout.setAlignment(Pos.CENTER);
-
-        Button makeBookingButton = new Button("Make Booking");
-        Button viewBookingsButton = new Button("View Bookings");
-
-        makeBookingButton.setOnAction(event -> {
-            primaryStage.setScene(createBookingScene(primaryStage));
+    
+        Button confirmButton = new Button("Confirm");
+        Button cancelButton = new Button("Cancel");
+    
+        HBox buttonBox = new HBox(10);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.getChildren().addAll(confirmButton, cancelButton);
+    
+        gridPane.add(tableTypeLabel, 0, 0);
+        gridPane.add(tableTypeComboBox, 1, 0);
+        gridPane.add(dateLabel, 0, 1);
+        gridPane.add(dateTextField, 1, 1);
+        gridPane.add(timeLabel, 0, 2);
+        gridPane.add(timeComboBox, 1, 2);
+        gridPane.add(buttonBox, 0, 3, 2, 1);
+    
+        VBox popupRoot = new VBox(10);
+        popupRoot.setAlignment(Pos.CENTER);
+        popupRoot.setPadding(new Insets(20));
+        popupRoot.getChildren().addAll(gridPane); 
+    
+        confirmButton.setOnAction(e -> {
+            int customerId = getCustomerId(firstName, lastName); 
+            String tableType = tableTypeComboBox.getValue();
+            String date = dateTextField.getText();
+            String time = timeComboBox.getValue();
+            insertBooking(customerId, tableType, date, time);
+        
+            popupStage.close();
+            showBookingSuccessMessage();
         });
-
-        viewBookingsButton.setOnAction(event -> {
-            // Fetch and display bookings from the database
-            displayBookings(primaryStage);
-        });
-
-        mainLayout.getChildren().addAll(makeBookingButton, viewBookingsButton);
-
-        return new Scene(mainLayout, 400, 300);
+    
+        Scene popupScene = new Scene(popupRoot, 400, 400);
+        popupStage.setScene(popupScene);
+        popupStage.showAndWait();
     }
 
-    // Method to show an alert dialog
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+    private void insertBooking(int customerId, String tableType, String date, String time) {
 
-    // Method to fetch and display bookings from the database
-    private void displayBookings(Stage primaryStage) {
-        try {
-            Connection conn = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
-            String sql = "SELECT * FROM bookings";
-            PreparedStatement statement = conn.prepareStatement(sql);
-            ResultSet resultSet = statement.executeQuery();
-
-            VBox layout = new VBox(10);
-            while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                int guests = resultSet.getInt("guests");
-                String duration = resultSet.getString("duration");
-                String specialInstructions = resultSet.getString("special_instructions");
-
-                Label bookingLabel = new Label("Booking ID: " + id + ", Name: " + name + ", Guests: " + guests + ", Duration: " + duration + ", Special Instructions: " + specialInstructions);
-                layout.getChildren().add(bookingLabel);
+        int numOfSeats = Integer.parseInt(tableType.split(" ")[0]); 
+    
+        String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?)";
+        
+        try (Connection connection = Functions.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, customerId);
+            preparedStatement.setInt(2, numOfSeats); 
+            preparedStatement.setString(3, date); 
+            preparedStatement.setString(4, time);
+            preparedStatement.setBoolean(5, false);
+            
+            int rowsInserted = preparedStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("Booking inserted successfully.");
             }
-
-            Scene scene = new Scene(layout, 600, 400);
-            primaryStage.setScene(scene);
-
-            resultSet.close();
-            statement.close();
-            conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert("Error", "Failed to fetch bookings from the database.");
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to insert booking");
         }
     }
 
-    public static void main(String[] args) {
-        launch(args);
+    private static int getCustomerId(String firstName, String lastName) {
+        int customerId = 0; 
+                
+        String query = "SELECT customer_id FROM customers WHERE first_name = ? AND last_name = ?";
+        
+        try (Connection connection = Functions.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, firstName);
+                preparedStatement.setString(2, lastName);
+            
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    customerId = resultSet.getInt("customer_id");
+                } else {
+                    System.out.println("customerId not received");
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to retrieve customer ID");
+        }
+        
+        return customerId;
     }
-<<<<<<< Updated upstream
-=======
+
+    private void showBookingSuccessMessage() {
+        Stage messageStage = new Stage();
+        messageStage.initModality(Modality.APPLICATION_MODAL);
+        messageStage.setTitle("Success");
+    
+        Label messageLabel = new Label("Booking created successfully, View your bookings in My Bookings");
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(e -> messageStage.close());
+    
+        VBox messageRoot = new VBox(20);
+        messageRoot.setAlignment(Pos.CENTER);
+        messageRoot.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+        messageRoot.getChildren().addAll(messageLabel, closeButton);
+        Scene messageScene = new Scene(messageRoot, 600, 100);
+    
+        messageStage.setScene(messageScene);
+        messageStage.show();
+    }
 
     @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showBookingPopup(String firstName, String lastName) {
@@ -271,5 +269,4 @@ public class Bookings extends Application {
         popupStage.showAndWait();
     }
     
->>>>>>> Stashed changes
 }

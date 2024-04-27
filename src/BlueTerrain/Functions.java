@@ -6,9 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -16,8 +18,13 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -25,16 +32,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 
 public class Functions {
 
     private static String OPENING_HOURS = "Opening Hours: 11:00 AM - 12:00 PM";
-    private static String BLUE_TERRAIN = "Welcome to BlueTerrain";
-//will vary basedo n your db setup
+    private static String BLUE_TERRAIN = "BLUE TERRAIN RESTAURANT";
+
     public static Connection getConnection() {
         Connection connection = null;
         try {
@@ -52,26 +56,73 @@ public class Functions {
         return connection;
     }
 
+    public static Background backGroundImage(String imagePath) {      
+        Image backgroundImage = new Image(imagePath);
+        BackgroundSize backgroundSize = new BackgroundSize(1000, 800, false, false, true, true);
+        BackgroundImage backgroundImg = new BackgroundImage(
+            backgroundImage,
+            BackgroundRepeat.NO_REPEAT, // Don't repeat the image
+            BackgroundRepeat.NO_REPEAT,
+            BackgroundPosition.DEFAULT,
+            backgroundSize
+        );  
+        Background background = new Background(backgroundImg);
+        return background;
+    }
+
     public static StackPane welcomePane() {
-        Color lightBlue = Color.rgb(173, 216, 230);
         StackPane lightBluePadding = new StackPane();
-        lightBluePadding.setBackground(new Background(new BackgroundFill(lightBlue, CornerRadii.EMPTY, Insets.EMPTY)));
-        lightBluePadding.setPadding(new Insets(10));
+        lightBluePadding.setPadding(new Insets(20));
         
         Label welcomeLabel = new Label(BLUE_TERRAIN);
-        welcomeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 25));
-        welcomeLabel.setStyle("-fx-text-fill: darkblue;");
+        welcomeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+        welcomeLabel.setStyle("-fx-text-fill: white;");
         
         lightBluePadding.getChildren().add(welcomeLabel);
 
         return lightBluePadding;
+    }
+
+    public static void setupAndShowScene(Stage primaryStage, Parent root) {
+        Scene scene = new Scene(root, 900, 700);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    public static VBox commonHeader(String imagePath) {
+        VBox root = Functions.createRootVBox();
+        root.setAlignment(Pos.TOP_CENTER); // Default alignment
+        Background background = Functions.backGroundImage(imagePath);
+        root.setBackground(background);
+        return root;
+    }
+
+    public static Button closeButton(Stage primaryStage) {
+        Button closeButton = new Button("Close");
+        closeButton.setAlignment(Pos.BOTTOM_RIGHT);
+        closeButton.setOnAction(e -> {
+            Restaurant restaurant = new Restaurant();
+            restaurant.start(primaryStage, Menu.getFirstName(), Menu.getLastName(), Menu.getProfileType());
+        });
+        return closeButton;
+    }
+
+    public static Label openingHours() {
+        Label openingHoursLabel = new Label(OPENING_HOURS);
+        openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+        openingHoursLabel.setStyle("-fx-text-fill: white;");
+        return openingHoursLabel;
+    }
+
+    public static void setMarginForNode(VBox vbox, Node node, Insets insets) {
+        VBox.setMargin(node, insets);
     }
     
     public static HBox createLabeledField(String labelText, String promptText) {
         HBox box = new HBox(10);
         Label label = new Label(labelText);
         label.setFont(new Font(20));
-        label.setStyle("-fx-text-fill: darkblue;");
+        label.setStyle("-fx-text-fill: white;");
         TextField textField = new TextField();
         textField.setPromptText(promptText);
         textField.setFont(new Font(15));
@@ -109,40 +160,12 @@ public class Functions {
         return root;
     }
 
-    public static void setupAndShowScene(Stage primaryStage, Parent root, int width, int height) {
-        Scene scene = new Scene(root, width, height);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    public static StackPane restuarantLabel() {
-        Color lightBlue = Color.rgb(173, 216, 230);
-        
-        StackPane stackPane = new StackPane();
-        stackPane.setBackground(new Background(new BackgroundFill(lightBlue, CornerRadii.EMPTY, Insets.EMPTY)));
-        stackPane.setPadding(new Insets(10));
-        
-        Label label = new Label("BlueTerrain");
-        label.setFont(Font.font("Arial", FontWeight.BOLD, 25));
-        label.setStyle("-fx-text-fill: darkblue;");
-        
-        stackPane.getChildren().add(label);
-        
-        return stackPane;
-    }
-
     public static VBox createButtonVBoxMenu(Button... buttons) {
         VBox box = new VBox(20);
         box.setAlignment(Pos.CENTER);
         box.setPadding(new Insets(20));
         box.getChildren().addAll(buttons);
         return box;
-    }
-
-    public static void setTooltipMenu(Button button, String tooltipText) {
-        Tooltip tooltip = new Tooltip(tooltipText);
-        tooltip.setAutoHide(false);
-        button.setTooltip(tooltip);
     }
 
     public static Button createButtonMenu(String text, Color bgColor) {
@@ -204,14 +227,6 @@ public class Functions {
         return tooltipTextList;
     }
 
-    public static Stage createPopupWindow(Stage primaryStage) {
-        Stage menuPopup = new Stage();
-        menuPopup.initOwner(primaryStage);
-        menuPopup.initStyle(StageStyle.UTILITY);
-        menuPopup.initModality(Modality.APPLICATION_MODAL);
-        return menuPopup;
-    }
-
     public static Button createButton1(String text, Color bgColor) {
         Button button = new Button(text);
         button.setFont(Font.font(18));
@@ -233,12 +248,5 @@ public class Functions {
         }
         return box;
     }
-
-    public static Label openingHours() {
-        Label openingHoursLabel = new Label(OPENING_HOURS);
-        openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
-        openingHoursLabel.setStyle("-fx-text-fill: darkblue;");
-        return openingHoursLabel;
-    }
-
+   
 }

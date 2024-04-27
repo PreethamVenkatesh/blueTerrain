@@ -9,7 +9,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -26,8 +25,6 @@ public class Tables {
 
         VBox root = Functions.createRootVBox();
         root.setAlignment(Pos.TOP_CENTER);
-
-        StackPane lightBluePadding = Functions.restuarantLabel();
 
         VBox leftBox = Functions.createButtonVBox(Color.LIGHTGREY, 
                 TABLE + "1", TABLE + "2", TABLE + "3", TABLE + "4", TABLE + "5");
@@ -51,7 +48,7 @@ public class Tables {
             primaryStage.show();
         });
 
-        root.getChildren().addAll(lightBluePadding, buttonsBox, closeButton);
+        root.getChildren().addAll(buttonsBox, closeButton);
 
         Scene scene = new Scene(root, 750, 550);
         tablePopup.setScene(scene);
