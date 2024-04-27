@@ -35,11 +35,7 @@ private StackPane loginPane;
     private static String STAFF = "Staff";
 
     public void start(Stage primaryStage) {        
-        VBox root = Functions.createRootVBox();
-        root.setAlignment(Pos.TOP_CENTER);
-
-        Background background = Functions.backGroundImage("/BlueTerrain/Images/BT_BackgroundImage.jpg");
-        root.setBackground(background);
+        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_BackgroundImage.jpg");
 
         HBox loginTypeBox = new HBox(10);
         loginTypeBox.setAlignment(Pos.TOP_CENTER);
