@@ -7,7 +7,6 @@ import java.time.format.DateTimeFormatter;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -16,11 +15,7 @@ import javafx.stage.Stage;
 public class Restaurant {
 
     public void start(Stage primaryStage, String firstName, String lastName, String profileType) {
-        VBox root = Functions.createRootVBox();
-        root.setAlignment(Pos.TOP_CENTER);
-
-        Background background = Functions.backGroundImage("/BlueTerrain/Images/BT_Common.jpeg");
-        root.setBackground(background);
+        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
         LocalDateTime now = LocalDateTime.now();
         ZoneId zoneId = ZoneId.systemDefault();
