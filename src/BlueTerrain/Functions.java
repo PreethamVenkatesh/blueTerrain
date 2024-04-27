@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -31,10 +32,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
 
 public class Functions {
 
@@ -88,6 +86,35 @@ public class Functions {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    public static VBox commonHeader(String imagePath) {
+        VBox root = Functions.createRootVBox();
+        root.setAlignment(Pos.TOP_CENTER); // Default alignment
+        Background background = Functions.backGroundImage(imagePath);
+        root.setBackground(background);
+        return root;
+    }
+
+    public static Button closeButton(Stage primaryStage) {
+        Button closeButton = new Button("Close");
+        closeButton.setAlignment(Pos.BOTTOM_RIGHT);
+        closeButton.setOnAction(e -> {
+            Restaurant restaurant = new Restaurant();
+            restaurant.start(primaryStage, Menu.getFirstName(), Menu.getLastName(), Menu.getProfileType());
+        });
+        return closeButton;
+    }
+
+    public static Label openingHours() {
+        Label openingHoursLabel = new Label(OPENING_HOURS);
+        openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+        openingHoursLabel.setStyle("-fx-text-fill: white;");
+        return openingHoursLabel;
+    }
+
+    public static void setMarginForNode(VBox vbox, Node node, Insets insets) {
+        VBox.setMargin(node, insets);
+    }
     
     public static HBox createLabeledField(String labelText, String promptText) {
         HBox box = new HBox(10);
@@ -137,12 +164,6 @@ public class Functions {
         box.setPadding(new Insets(20));
         box.getChildren().addAll(buttons);
         return box;
-    }
-
-    public static void setTooltipMenu(Button button, String tooltipText) {
-        Tooltip tooltip = new Tooltip(tooltipText);
-        tooltip.setAutoHide(false);
-        button.setTooltip(tooltip);
     }
 
     public static Button createButtonMenu(String text, Color bgColor) {
@@ -204,14 +225,6 @@ public class Functions {
         return tooltipTextList;
     }
 
-    public static Stage createPopupWindow(Stage primaryStage) {
-        Stage menuPopup = new Stage();
-        menuPopup.initOwner(primaryStage);
-        menuPopup.initStyle(StageStyle.UTILITY);
-        menuPopup.initModality(Modality.APPLICATION_MODAL);
-        return menuPopup;
-    }
-
     public static Button createButton1(String text, Color bgColor) {
         Button button = new Button(text);
         button.setFont(Font.font(18));
@@ -233,27 +246,5 @@ public class Functions {
         }
         return box;
     }
-
-    public static Label openingHours() {
-        Label openingHoursLabel = new Label(OPENING_HOURS);
-        openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
-        openingHoursLabel.setStyle("-fx-text-fill: darkblue;");
-        return openingHoursLabel;
-    }
-
-    public static void setMarginForNode(VBox vbox, Node node, Insets insets) {
-        VBox.setMargin(node, insets);
-    }
-
-    public static VBox createButtonVBoxFields(Color color, String buttonLabel) {
-        VBox box = new VBox(20);
-        box.setAlignment(Pos.CENTER);
-        box.setPadding(new Insets(20));
-
-        Button button = createButton1(buttonLabel, color);
-        button.setWrapText(true);
-        box.getChildren().add(button);
-        return box;
-    }
-
+   
 }
