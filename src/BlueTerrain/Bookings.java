@@ -7,15 +7,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Bookings extends Application {
 
     // JDBC connection parameters
-        
     String databaseName = "cafedb";
     String USERNAME = "root";
     String PASSWORD = "2360313";
@@ -36,7 +32,7 @@ public class Bookings extends Application {
         // Event handling for view bookings button
         viewBookingsButton.setOnAction(event -> {
             // Fetch and display bookings from the database
-            showAlert("View Bookings", "Fetching bookings from the database...");
+            displayBookings(primaryStage);
         });
 
         // Create the main layout
@@ -151,7 +147,8 @@ public class Bookings extends Application {
         });
 
         viewBookingsButton.setOnAction(event -> {
-            showAlert("View Bookings", "Fetching bookings from the database...");
+            // Fetch and display bookings from the database
+            displayBookings(primaryStage);
         });
 
         mainLayout.getChildren().addAll(makeBookingButton, viewBookingsButton);
@@ -166,6 +163,38 @@ public class Bookings extends Application {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    // Method to fetch and display bookings from the database
+    private void displayBookings(Stage primaryStage) {
+        try {
+            Connection conn = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
+            String sql = "SELECT * FROM bookings";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery();
+
+            VBox layout = new VBox(10);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                int guests = resultSet.getInt("guests");
+                String duration = resultSet.getString("duration");
+                String specialInstructions = resultSet.getString("special_instructions");
+
+                Label bookingLabel = new Label("Booking ID: " + id + ", Name: " + name + ", Guests: " + guests + ", Duration: " + duration + ", Special Instructions: " + specialInstructions);
+                layout.getChildren().add(bookingLabel);
+            }
+
+            Scene scene = new Scene(layout, 600, 400);
+            primaryStage.setScene(scene);
+
+            resultSet.close();
+            statement.close();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to fetch bookings from the database.");
+        }
     }
 
     public static void main(String[] args) {
