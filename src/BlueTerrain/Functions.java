@@ -255,5 +255,4 @@ public class Functions {
         box.getChildren().add(button);
         return box;
     }
-
 }
