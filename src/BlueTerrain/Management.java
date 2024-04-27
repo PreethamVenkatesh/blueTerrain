@@ -23,12 +23,7 @@ public class Management {
 
         Functions.setMarginForNode(root, buttonsBox, new Insets(20, 20, 20, 0));
 
-        Button closeButton = new Button("Close");
-        closeButton.setAlignment(Pos.BOTTOM_RIGHT);
-        closeButton.setOnAction(e -> {
-            Restaurant restaurant = new Restaurant();
-            restaurant.start(primaryStage, Menu.getFirstName(), Menu.getLastName(), Menu.getProfileType());
-        });
+        Button closeButton = Functions.closeButton(primaryStage);
 
         root.getChildren().addAll(Functions.welcomePane(), buttonsBox, closeButton);
         Functions.setupAndShowScene(primaryStage, root);
