@@ -11,9 +11,7 @@ import javafx.stage.Stage;
 public class Management {
     public static void showManagementPopup(Stage primaryStage) {
 
-        VBox root = Functions.createRootVBox();
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setBackground(Functions.backGroundImage("/BlueTerrain/Images/BT_Common.jpeg"));
+        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
         Button dineInButton = Functions.createButtonMenu("Dine-In", Color.LAVENDER);
         Button takeAwayButton = Functions.createButtonMenu("Take-Away", Color.LAVENDER);
