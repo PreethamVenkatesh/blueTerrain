@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Comparator;
 
+import javafx.application.Application;
+import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -267,6 +269,12 @@ public class Bookings extends Application {
         Scene popupScene = new Scene(popupRoot, 400, 600);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
+    }
+
+    @Override
+    public void start(Stage arg0) throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
     
 }
