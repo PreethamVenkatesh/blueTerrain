@@ -12,7 +12,6 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -20,11 +19,7 @@ import javafx.stage.Stage;
 
 public class Signup {
     public void start(Stage primaryStage, String defaultSignupType) {
-        VBox root = Functions.createRootVBox();
-        root.setAlignment(Pos.TOP_CENTER);
-        
-        Background background = Functions.backGroundImage("/BlueTerrain/Images/BT_Signup.jpg");
-        root.setBackground(background);
+        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Signup.jpg");
 
         Label signupLabel = new Label("Are you here for the first time? Signup below");
         signupLabel.setFont(new Font(20)); 
@@ -144,8 +139,7 @@ public class Signup {
             }
         });
 
-        
-
+    
         root.getChildren().addAll(Functions.welcomePane(), signupLabel, signupTypeBox, firstNameBox, lastNameBox, emailBox, addressBox, signUpButton, loginLink);
         Functions.setupAndShowScene(primaryStage, root); 
     }
