@@ -75,7 +75,7 @@ public class Login {
                 //-------------------launch bookings here --------------------
                  {
                     Bookings bookings = new Bookings();
-                    bookings.start(primaryStage);
+                    bookings.start(primaryStage,firstName,lastName);
                 } else {
                     errorMessage.setText("Customer login development in progress");
                 }
@@ -120,5 +120,4 @@ public class Login {
         }
     }
 }
-
 

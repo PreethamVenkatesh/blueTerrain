@@ -38,7 +38,7 @@ public class Functions {
     public static Connection getConnection() {
         Connection connection = null;
         try {
-          
+                 
             String databaseName = "cafedb";
     String USERNAME = "root";
     String PASSWORD = "2360313";
