@@ -241,6 +241,7 @@ public class Bookings {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 int slNo = 1;
                 while (resultSet.next()) {
+                    
                     String bookingDate = resultSet.getString("date");
                     String bookingTime = resultSet.getString("time");
                     int tableType = resultSet.getInt("tableType");

@@ -44,7 +44,7 @@ public class Functions {
         try {
             String JDBC_URL = "jdbc:mysql://localhost:3306/BlueTerrain_Restaurant";
             String USERNAME = "root";
-            String PASSWORD = "";
+            String PASSWORD = "410707";
 
             connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
         } catch (SQLException e) {

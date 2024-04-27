@@ -84,7 +84,7 @@ private StackPane loginPane;
                     restaurant.start(primaryStage, firstName, lastName, profileType);
                 } else if (loginType.equals(CUSTOMER)) {
                     Bookings bookings = new Bookings();
-                    bookings.start(primaryStage);
+                    bookings.start(primaryStage, firstName, lastName);
                 } else {
                     errorMessage.setText("Customer login development in progress");
                 }

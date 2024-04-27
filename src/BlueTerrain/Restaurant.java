@@ -55,6 +55,9 @@ public class Restaurant {
         Button managementButton = (Button) leftBox.getChildren().get(1);
         managementButton.setOnAction(e -> Management.showManagementPopup(primaryStage));
 
+        Button bookingButton = (Button) leftBox.getChildren().get(0);
+        bookingButton.setOnAction(e -> BookingDetails.showManagerPopup(primaryStage));
+
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
         Menu.setProfileType(profileType);
