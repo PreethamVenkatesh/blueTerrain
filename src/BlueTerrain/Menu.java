@@ -52,9 +52,7 @@ public class Menu {
     }
 
     public static void showMenu(Stage primaryStage) {
-        VBox root = Functions.createRootVBox();
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setBackground(Functions.backGroundImage("/BlueTerrain/Images/BT_Common.jpeg"));
+        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
         Button fishMenuButton = Functions.createButtonMenu("FISH MENU", Color.LAVENDER);
@@ -78,12 +76,7 @@ public class Menu {
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
 
-        Button closeButton = new Button("Close");
-        closeButton.setAlignment(Pos.BOTTOM_RIGHT);
-        closeButton.setOnAction(e -> {
-            Restaurant restaurant = new Restaurant();
-            restaurant.start(primaryStage, Menu.getFirstName(), Menu.getLastName(), Menu.getProfileType());
-        });
+        Button closeButton = Functions.closeButton(primaryStage);
 
         root.getChildren().addAll(Functions.welcomePane(), buttonsBox, closeButton);
         Functions.setupAndShowScene(primaryStage, root);
