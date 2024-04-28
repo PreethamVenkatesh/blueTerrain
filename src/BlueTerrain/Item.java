@@ -4,6 +4,7 @@ public class Item {
     private int slNo;
     private String itemName;
     private double itemPrice;
+    private boolean selected;
 
     public Item(int slNo, String itemName, double itemPrice, boolean b) {
         this.slNo = slNo;
@@ -14,6 +15,15 @@ public class Item {
     public int getSlNo() {
         return slNo;
     }
+//boolean method to get menu selection
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
 
     public void setSlNo(int slNo) {
         this.slNo = slNo;
@@ -35,8 +45,5 @@ public class Item {
         this.itemPrice = itemPrice;
     }
 
-    public boolean isSelected() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isSelected'");
-    }
+    
 }

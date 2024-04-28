@@ -1,10 +1,13 @@
 package BlueTerrain;
 
+import javafx.scene.control.TableCell;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -23,6 +26,7 @@ import javafx.stage.Stage;
 
 public class Menu {
 
+    private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
     private static String firstName;
     private static String lastName;
@@ -104,17 +108,15 @@ public class Menu {
         itemPriceColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
         itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("itemPrice"));
 
-        TableColumn<Item, Boolean> selectColumn = new TableColumn<>("Select");
-        selectColumn.setCellValueFactory(new PropertyValueFactory<>("selected"));
-        selectColumn.setCellFactory(CheckBoxTableCell.forTableColumn(selectColumn)); // Use CheckBoxTableCell
-        selectColumn.setEditable(true); // Allow editing of checkboxes
-
+        TableColumn<Item, Void> selectColumn = new TableColumn<>("Select/Deselect");
+        selectColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+        selectColumn.setCellFactory(tc -> new ButtonCell());
         tableView.getColumns().addAll(slNoColumn, itemNameColumn, itemPriceColumn, selectColumn);
 
         ObservableList<Item> itemList = FXCollections.observableArrayList();
 
         try (Connection connection = Functions.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(MENU_QUERY)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(MENU_QUERY)) {
             preparedStatement.setString(1, itemType);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 int slNo = 1;
@@ -148,7 +150,7 @@ public class Menu {
         popupRoot.setPadding(new Insets(20));
         popupRoot.getChildren().addAll(tableView, buttonBox);
 
-        Scene popupScene =  new Scene(popupRoot, 800, 400);
+        Scene popupScene = new Scene(popupRoot, 800, 400);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
@@ -186,28 +188,63 @@ public class Menu {
         Scene cartScene = new Scene(cartRoot, 400, 300);
         cartStage.setScene(cartScene);
         cartStage.showAndWait();
-
     }
-//inserting order here------------------
+
+    private static class ButtonCell extends TableCell<Item, Void> {
+        private final Button selectButton = new Button("Select/Deselect");
+        private boolean clicked = false;
+
+        private ButtonCell() {
+            selectButton.setOnAction(event -> {
+                if (!clicked) {
+                    Item selectedItem = getTableView().getItems().get(getIndex());
+                    selectedItem.setSelected(!selectedItem.isSelected());
+                    System.out.println("Item selected: " + selectedItem.getItemName());
+                    clicked = true;
+                    setStyle("-fx-background-color: green;");
+                    setGraphic(null);
+                    setText(selectedItem.isSelected() ? "Selected" : "Deselected");
+                    setTextFill(Color.WHITE);
+                    setAlignment(Pos.CENTER);
+                }
+            });
+            setGraphic(selectButton);
+        }
+    }
 
 
+
+
+
+
+
+
+
+
+
+
+
+    // Method to confirm the order
     private static void confirmOrder(ObservableList<Item> itemList) {
-        // Insert selected items into the orders table in the database
+        // Retrieve customerId based on logged-in user
+        int customerId = getCustomerId(getFirstName(), getLastName());
+        System.out.println("Customer ID: " + customerId); // Log the retrieved customerId
+
         try (Connection connection = Functions.getConnection()) {
-            String query = "INSERT INTO orders (itemName, itemPrice) VALUES (?, ?)";
+            String query = "INSERT INTO test_order (itemName, itemPrice, customerId) VALUES (?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 for (Item item : itemList) {
-                    if (item.isSelected()) {
-                        preparedStatement.setString(1, item.getItemName());
-                        preparedStatement.setDouble(2, item.getItemPrice());
-                        preparedStatement.executeUpdate();
-                    }
+                    preparedStatement.setString(1, item.getItemName());
+                    preparedStatement.setDouble(2, item.getItemPrice());
+                    preparedStatement.setInt(3, customerId); // Set customerId
+                    preparedStatement.executeUpdate();
                 }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println("Error: Failed to insert order - " + ex.getMessage());
         }
+
         // Show confirmation message
         Stage confirmationStage = new Stage();
         confirmationStage.initModality(Modality.APPLICATION_MODAL);
@@ -222,4 +259,27 @@ public class Menu {
         confirmationStage.setScene(confirmationScene);
         confirmationStage.showAndWait();
     }
+
+    // Method to get the customerId based on firstName and lastName
+    private static int getCustomerId(String firstName, String lastName) {
+        int customerId = 0;
+        String query = "SELECT customerId FROM customers WHERE firstName = ? AND lastName = ?";
+        try (Connection connection = Functions.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, firstName);
+            preparedStatement.setString(2, lastName);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    customerId = resultSet.getInt("customer_Id");
+                } else {
+                    System.err.println("Error: Customer ID not found for " + firstName + " " + lastName);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to retrieve customer ID - " + ex.getMessage());
+        }
+        return customerId;
+    }
+
 }
