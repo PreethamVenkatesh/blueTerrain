@@ -42,9 +42,11 @@ public class Functions {
     public static Connection getConnection() {
         Connection connection = null;
         try {
-            String JDBC_URL = "jdbc:mysql://localhost:3306/BlueTerrain_Restaurant";
-            String USERNAME = "root";
-            String PASSWORD = "";
+                 
+            String databaseName = "cafedb";
+    String USERNAME = "root";
+    String PASSWORD = "2360313";
+    String JDBC_URL = "jdbc:mysql://127.0.0.1:3306/" + databaseName;
 
             connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
         } catch (SQLException e) {

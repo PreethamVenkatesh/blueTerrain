@@ -68,7 +68,16 @@ public class Bookings {
         Button bookTableButton = (Button) leftBox.getChildren().get(0); 
         bookTableButton.setOnAction(e -> bookTablePopup(firstName, lastName));
 
+
+        Button orderNowButton = (Button) centreBox.getChildren().get(0);
+        orderNowButton.setOnAction(e -> Menu.showMenu(primaryStage));
+
+        // Set action for TAKE AWAY button
+        Button takeAwayButton = (Button) rightBox.getChildren().get(0);
+        takeAwayButton.setOnAction(e -> Menu.showMenu(primaryStage));
     }
+
+    
 
     private void bookTablePopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
@@ -120,6 +129,7 @@ public class Bookings {
             String tableType = tableTypeComboBox.getValue();
             String date = dateTextField.getText();
             String time = timeComboBox.getValue();
+           
             insertBooking(customerId, tableType, date, time);
         
             popupStage.close();
@@ -135,7 +145,7 @@ public class Bookings {
 
         int numOfSeats = Integer.parseInt(tableType.split(" ")[0]); 
     
-        String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?,?)";
         
         try (Connection connection = Functions.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -144,6 +154,7 @@ public class Bookings {
             preparedStatement.setString(3, date); 
             preparedStatement.setString(4, time);
             preparedStatement.setBoolean(5, false);
+             
             
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0) {

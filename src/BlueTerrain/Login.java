@@ -82,9 +82,11 @@ private StackPane loginPane;
                 if (loginType.equals(STAFF)) { 
                     Restaurant restaurant = new Restaurant();
                     restaurant.start(primaryStage, firstName, lastName, profileType);
-                } else if (loginType.equals(CUSTOMER)) {
+                } else if (loginType.equals(CUSTOMER))
+                //-------------------launch bookings here --------------------
+                 {
                     Bookings bookings = new Bookings();
-                    bookings.start(primaryStage);
+                    bookings.start(primaryStage,firstName,lastName);
                 } else {
                     errorMessage.setText("Customer login development in progress");
                 }
@@ -134,5 +136,4 @@ private StackPane loginPane;
         throw new UnsupportedOperationException("Unimplemented method 'setStage'");
     }
 }
-
 
