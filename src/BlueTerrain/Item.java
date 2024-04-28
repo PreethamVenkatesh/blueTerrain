@@ -5,7 +5,7 @@ public class Item {
     private String itemName;
     private double itemPrice;
 
-    public Item(int slNo, String itemName, double itemPrice) {
+    public Item(int slNo, String itemName, double itemPrice, boolean b) {
         this.slNo = slNo;
         this.itemName = itemName;
         this.itemPrice = itemPrice;
@@ -33,5 +33,10 @@ public class Item {
 
     public void setItemPrice(double itemPrice) {
         this.itemPrice = itemPrice;
+    }
+
+    public boolean isSelected() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isSelected'");
     }
 }

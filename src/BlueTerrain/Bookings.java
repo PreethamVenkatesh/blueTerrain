@@ -6,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Comparator;
 
-import javafx.application.Application;
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -31,9 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.sql.*;
-
-public class Bookings extends Application {
+public class Bookings {
 
     private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
 
@@ -72,7 +68,16 @@ public class Bookings extends Application {
         Button bookTableButton = (Button) leftBox.getChildren().get(0); 
         bookTableButton.setOnAction(e -> bookTablePopup(firstName, lastName));
 
+
+        Button orderNowButton = (Button) centreBox.getChildren().get(0);
+        orderNowButton.setOnAction(e -> Menu.showMenu(primaryStage));
+
+        // Set action for TAKE AWAY button
+        Button takeAwayButton = (Button) rightBox.getChildren().get(0);
+        takeAwayButton.setOnAction(e -> Menu.showMenu(primaryStage));
     }
+
+    
 
     private void bookTablePopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
@@ -124,6 +129,7 @@ public class Bookings extends Application {
             String tableType = tableTypeComboBox.getValue();
             String date = dateTextField.getText();
             String time = timeComboBox.getValue();
+           
             insertBooking(customerId, tableType, date, time);
         
             popupStage.close();
@@ -139,7 +145,7 @@ public class Bookings extends Application {
 
         int numOfSeats = Integer.parseInt(tableType.split(" ")[0]); 
     
-        String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?,?)";
         
         try (Connection connection = Functions.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -148,6 +154,7 @@ public class Bookings extends Application {
             preparedStatement.setString(3, date); 
             preparedStatement.setString(4, time);
             preparedStatement.setBoolean(5, false);
+             
             
             int rowsInserted = preparedStatement.executeUpdate();
             if (rowsInserted > 0) {
@@ -269,12 +276,6 @@ public class Bookings extends Application {
         Scene popupScene = new Scene(popupRoot, 400, 600);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
-    }
-
-    @Override
-    public void start(Stage arg0) throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'start'");
     }
     
 }

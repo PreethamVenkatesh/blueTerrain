@@ -4,13 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -103,7 +104,12 @@ public class Menu {
         itemPriceColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
         itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("itemPrice"));
 
-        tableView.getColumns().addAll(slNoColumn, itemNameColumn, itemPriceColumn);
+        TableColumn<Item, Boolean> selectColumn = new TableColumn<>("Select");
+        selectColumn.setCellValueFactory(new PropertyValueFactory<>("selected"));
+        selectColumn.setCellFactory(CheckBoxTableCell.forTableColumn(selectColumn)); // Use CheckBoxTableCell
+        selectColumn.setEditable(true); // Allow editing of checkboxes
+
+        tableView.getColumns().addAll(slNoColumn, itemNameColumn, itemPriceColumn, selectColumn);
 
         ObservableList<Item> itemList = FXCollections.observableArrayList();
 
@@ -115,7 +121,7 @@ public class Menu {
                 while (resultSet.next()) {
                     String itemName = resultSet.getString("ItemName");
                     double itemPrice = resultSet.getDouble("ItemValue");
-                    itemList.add(new Item(slNo++, itemName, itemPrice));
+                    itemList.add(new Item(slNo++, itemName, itemPrice, false));
                 }
             }
         } catch (SQLException ex) {
@@ -125,13 +131,95 @@ public class Menu {
 
         tableView.setItems(itemList);
 
+        // View My Cart Button
+        Button viewCartButton = new Button("View My Cart");
+        viewCartButton.setOnAction(e -> viewCart(itemList));
+
+        // Confirm Order Button
+        Button confirmOrderButton = new Button("Confirm Order");
+        confirmOrderButton.setOnAction(e -> confirmOrder(itemList));
+
+        HBox buttonBox = new HBox(10);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.getChildren().addAll(viewCartButton, confirmOrderButton);
+
         VBox popupRoot = new VBox(10);
         popupRoot.setAlignment(Pos.CENTER);
         popupRoot.setPadding(new Insets(20));
-        popupRoot.getChildren().addAll(tableView);
+        popupRoot.getChildren().addAll(tableView, buttonBox);
 
-        Scene popupScene = new Scene(popupRoot, 800, 400);
+        Scene popupScene =  new Scene(popupRoot, 800, 400);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void viewCart(ObservableList<Item> itemList) {
+        Stage cartStage = new Stage();
+        cartStage.initModality(Modality.APPLICATION_MODAL);
+        cartStage.setTitle("My Cart");
+
+        TableView<Item> cartTableView = new TableView<>();
+        cartTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Item, Integer> slNoColumn = new TableColumn<>("SL. NO.");
+        slNoColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+        slNoColumn.setCellValueFactory(new PropertyValueFactory<>("slNo"));
+
+        TableColumn<Item, String> itemNameColumn = new TableColumn<>("Item Name");
+        itemNameColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+        itemNameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+
+        TableColumn<Item, Double> itemPriceColumn = new TableColumn<>("Item Price (£)");
+        itemPriceColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+        itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("itemPrice"));
+
+        cartTableView.getColumns().addAll(slNoColumn, itemNameColumn, itemPriceColumn);
+
+        cartTableView.setItems(itemList);
+
+        VBox cartRoot = new VBox(10);
+        cartRoot.setAlignment(Pos.CENTER);
+        cartRoot.setPadding(new Insets(20));
+        cartRoot.getChildren().addAll(cartTableView);
+
+        Scene cartScene = new Scene(cartRoot, 400, 300);
+        cartStage.setScene(cartScene);
+        cartStage.showAndWait();
+
+    }
+//inserting order here------------------
+
+
+    private static void confirmOrder(ObservableList<Item> itemList) {
+        // Insert selected items into the orders table in the database
+        try (Connection connection = Functions.getConnection()) {
+            String query = "INSERT INTO orders (itemName, itemPrice) VALUES (?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                for (Item item : itemList) {
+                    if (item.isSelected()) {
+                        preparedStatement.setString(1, item.getItemName());
+                        preparedStatement.setDouble(2, item.getItemPrice());
+                        preparedStatement.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to insert order - " + ex.getMessage());
+        }
+        // Show confirmation message
+        Stage confirmationStage = new Stage();
+        confirmationStage.initModality(Modality.APPLICATION_MODAL);
+        confirmationStage.setTitle("Order Confirmation");
+
+        VBox confirmationRoot = new VBox(20);
+        confirmationRoot.setAlignment(Pos.CENTER);
+        confirmationRoot.setPadding(new Insets(20));
+        confirmationRoot.getChildren().addAll(new Label("Order confirmed successfully!"));
+
+        Scene confirmationScene = new Scene(confirmationRoot, 300, 100);
+        confirmationStage.setScene(confirmationScene);
+        confirmationStage.showAndWait();
     }
 }
