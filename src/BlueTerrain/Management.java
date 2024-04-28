@@ -78,24 +78,7 @@ public class Management {
         List<String> rowData3 = new ArrayList<>(Arrays.asList("\n Table 3", "\n Table 7", "\n ", "\n ")); 
         List<String> rowData4 = new ArrayList<>(Arrays.asList("\n Table 4", "\n Table 8", "\n ", "\n ")); 
            
-           itemList.addAll(rowData1, rowData2, rowData3, rowData4);
-
-        // try (Connection connection = Functions.getConnection();
-        //         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        //         ResultSet resultSet = preparedStatement.executeQuery()) {
-        //     int slNo = 1;
-        //     while (resultSet.next()) {
-        //         List<String> rowData = new ArrayList<>();
-        //         for (int i = 1; i <= columnTitles.length; i++) {
-        //             rowData.add(resultSet.getString(i));
-        //         }
-        //         itemList.add(rowData);
-        //         slNo++;
-        //     }
-        // } catch (SQLException ex) {
-        //     ex.printStackTrace();
-        //     System.err.println("Error: Failed to fetch data - " + ex.getMessage());
-        // }
+        itemList.addAll(rowData1, rowData2, rowData3, rowData4);
 
         for (int i = 0; i < columnTitles.length; i++) {
             final int index = i;
