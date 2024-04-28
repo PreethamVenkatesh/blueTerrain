@@ -6,8 +6,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -26,7 +24,6 @@ import javafx.stage.Stage;
 
 public class Menu {
 
-    private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
     private static String firstName;
     private static String lastName;
@@ -155,7 +152,7 @@ public class Menu {
         popupStage.showAndWait();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "deprecation" })
     private static void viewCart(ObservableList<Item> itemList) {
         Stage cartStage = new Stage();
         cartStage.initModality(Modality.APPLICATION_MODAL);

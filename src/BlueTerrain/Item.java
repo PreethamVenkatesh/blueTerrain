@@ -15,7 +15,7 @@ public class Item {
     public int getSlNo() {
         return slNo;
     }
-//boolean method to get menu selection
+
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
