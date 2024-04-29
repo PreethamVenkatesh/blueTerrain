@@ -26,8 +26,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class Management {
-    private static String BOOKINGID_QUERY = "SELECT bookingId, tableName FROM tableAllocation";
-    private static String BOOKINGSTATUS_QUERY = "SELECT bookingId FROM tableAllocation";
+    private static String BOOKINGID_QUERY = "SELECT bookingId, tableAllocation FROM bookings";
+    private static String BOOKINGSTATUS_QUERY = "SELECT bookingId FROM bookings";
     
     public static void showManagementPopup(Stage primaryStage) {
 
@@ -38,10 +38,10 @@ public class Management {
         Button bookingStatusButton = Functions.createButtonMenu("Booking Status", Color.LAVENDER);
 
         tableInfoButton.setOnAction(e -> showPopup("Table Information", 
-                                                     new String[]{" Type-1 \n 2-Seater", 
-                                                                  " Type-2 \n 4-Seater", 
-                                                                  " Type-3 \n 8-Seater", 
-                                                                  " Type-4 \n 10-Seater"}));
+                                                     new String[]{"2 Seater", 
+                                                                  "4 Seater", 
+                                                                  "8 Seater", 
+                                                                  "10 Seater"}));
 
         tableAllocationButton.setOnAction(e -> showPopup1("Table Allocation", 
                                                           new String[]{"Sl. No.", "Booking ID", "Table Allocation"}));
@@ -167,7 +167,7 @@ private static class ComboBoxCell extends TableCell<List<String>, String> {
 
     public ComboBoxCell() {
         comboBox = new ComboBox<>();
-        comboBox.getItems().addAll("Table 1", "Table 2", "Table 3");
+        comboBox.getItems().addAll("Table 1", "Table 2", "Table 3", "Table 4", "Table 5", "Table 6", "Table 7", "Table 8", "Table 9", "Table 10", "Table 11");
         comboBox.setOnAction(event -> {
             String selectedItem = comboBox.getValue();
             commitEdit(selectedItem);
@@ -202,7 +202,7 @@ private static class ComboBoxCell extends TableCell<List<String>, String> {
     private void updateTableAllocation(String bookingId, String newValue) {
         // Update the tableAllocation table in the database with the new table allocation
         try (Connection connection = Functions.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE tableAllocation SET tableName = ? WHERE bookingId = ?")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE bookings SET tableAllocation = ? WHERE bookingId = ?")) {
             preparedStatement.setString(1, newValue);
             preparedStatement.setString(2, bookingId);
             preparedStatement.executeUpdate();
@@ -310,7 +310,7 @@ private static class ComboBoxCell extends TableCell<List<String>, String> {
         // Method to update booking status in the database
         private void updateBookingStatus(String bookingId, boolean approved) {
             try (Connection connection = Functions.getConnection();
-                 PreparedStatement preparedStatement = connection.prepareStatement("UPDATE tableAllocation SET BookingStatus = ? WHERE bookingId = ?")) {
+                 PreparedStatement preparedStatement = connection.prepareStatement("UPDATE bookings SET isApproved = ? WHERE bookingId = ?")) {
                 preparedStatement.setBoolean(1, approved);
                 preparedStatement.setString(2, bookingId);
                 preparedStatement.executeUpdate();
