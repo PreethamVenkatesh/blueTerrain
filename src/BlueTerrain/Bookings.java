@@ -43,12 +43,11 @@ public class Bookings {
         Functions.setMarginForNode(root, userDetailsLabel, new Insets(20, 20, 20, 0));
         
         VBox leftBox = Functions.createButtonVBox(Color.LAVENDER, "BOOK TABLE");
-        VBox centreBox = Functions.createButtonVBox(Color.LAVENDER, "ORDER NOW");
-        VBox rightBox = Functions.createButtonVBox(Color.LAVENDER, "TAKE AWAY");
+        VBox centreBox = Functions.createButtonVBox(Color.LAVENDER, "TAKE AWAY");
 
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
+        buttonsBox.getChildren().addAll(leftBox, centreBox);
 
         Hyperlink myBookings = new Hyperlink("My Bookings");
         myBookings.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20;");
@@ -57,6 +56,8 @@ public class Bookings {
 
         Hyperlink myOrders = new Hyperlink("My Orders");
         myOrders.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20;");
+
+        myOrders.setOnAction(e -> showOrderPopup(firstName, lastName));
 
         HBox hyperlinkBox = new HBox();
         hyperlinkBox.getChildren().addAll(myBookings, myOrders);
@@ -72,9 +73,6 @@ public class Bookings {
         Button orderNowButton = (Button) centreBox.getChildren().get(0);
         orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName));
 
-        // Set action for TAKE AWAY button
-        Button takeAwayButton = (Button) rightBox.getChildren().get(0);
-        takeAwayButton.setOnAction(e -> Menu.showMenu(primaryStage));
     }
 
     private void bookTablePopup(String firstName, String lastName) {
@@ -266,6 +264,74 @@ public class Bookings {
             ex.printStackTrace();
             System.err.println("Error: Failed to fetch staff profiles - " + ex.getMessage());
         }
+        
+        bookingList.sort(Comparator.comparing(Reservation::getBookingDate));
+        tableView.setItems(bookingList);
+    
+        VBox popupRoot = new VBox(10);
+        popupRoot.setAlignment(Pos.CENTER);
+        popupRoot.setPadding(new Insets(20));
+        popupRoot.getChildren().addAll(tableView);
+    
+        Scene popupScene = new Scene(popupRoot, 400, 600);
+        popupStage.setScene(popupScene);
+        popupStage.showAndWait();
+    }
+
+    @SuppressWarnings({ "unchecked", "deprecation" })
+    private static void showOrderPopup(String firstName, String lastName) {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setTitle("My Bookings");
+    
+        TableView<Reservation> tableView = new TableView<>();
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    
+        TableColumn<Reservation, Integer> slNoColumn = new TableColumn<>("Sl. No.");
+        slNoColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12; -fx-alignment: CENTER;");
+        slNoColumn.setCellValueFactory(new PropertyValueFactory<>("slNo"));
+    
+        TableColumn<Reservation, String> bookingDateColumn = new TableColumn<>("Date");
+        bookingDateColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
+        bookingDateColumn.setCellValueFactory(new PropertyValueFactory<>("bookingDate"));
+        bookingDateColumn.setComparator(Comparator.comparing(String::toString));
+
+        TableColumn<Reservation, String> bookingTimeColumn = new TableColumn<>("Time");
+        bookingTimeColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
+        bookingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("bookingTime"));
+
+        TableColumn<Reservation, Integer> tableTypeColumn = new TableColumn<>("Table Type");
+        tableTypeColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12; -fx-alignment: CENTER;");
+        tableTypeColumn.setCellValueFactory(new PropertyValueFactory<>("tableType"));
+
+        TableColumn<Reservation, Boolean> bookingStatusColumn = new TableColumn<>("Status");
+        bookingStatusColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
+        bookingStatusColumn.setCellValueFactory(new PropertyValueFactory<>("bookingStatus"));
+    
+        tableView.getColumns().addAll(slNoColumn, bookingDateColumn, bookingTimeColumn, tableTypeColumn, bookingStatusColumn);
+    
+        ObservableList<Reservation> bookingList = FXCollections.observableArrayList();
+
+        int customerId = getCustomerId(firstName, lastName); 
+    
+        // try (Connection connection = Functions.getConnection();
+        //      PreparedStatement preparedStatement = connection.prepareStatement(BOOKING_QUERY)) {
+        //     preparedStatement.setInt(1, customerId);
+        //     try (ResultSet resultSet = preparedStatement.executeQuery()) {
+        //         int slNo = 1;
+        //         while (resultSet.next()) {
+        //             String bookingDate = resultSet.getString("date");
+        //             String bookingTime = resultSet.getString("time");
+        //             int tableType = resultSet.getInt("tableType");
+        //             Boolean status = resultSet.getBoolean("isApproved");
+        //             String bookingStatus = status ? "Booked" : "Pending";
+        //             bookingList.add(new Reservation(slNo++, bookingDate, bookingTime, tableType, bookingStatus));
+        //         }
+        //     }
+        // } catch (SQLException ex) {
+        //     ex.printStackTrace();
+        //     System.err.println("Error: Failed to fetch staff profiles - " + ex.getMessage());
+        // }
         
         bookingList.sort(Comparator.comparing(Reservation::getBookingDate));
         tableView.setItems(bookingList);
