@@ -82,7 +82,6 @@ private StackPane loginPane;
                     Restaurant restaurant = new Restaurant();
                     restaurant.start(primaryStage, firstName, lastName, profileType);
                 } else if (loginType.equals(CUSTOMER))
-                //-------------------launch bookings here --------------------
                  {
                     Bookings bookings = new Bookings();
                     bookings.start(primaryStage,firstName,lastName);
@@ -130,9 +129,5 @@ private StackPane loginPane;
         }
     }
 
-    public void setStage(Stage primaryStage) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setStage'");
-    }
 }
 
