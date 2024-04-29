@@ -16,6 +16,9 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -23,47 +26,48 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class CustomerOrder {
-    
+
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
+    private static ObservableList<Item> selectedItems = FXCollections.observableArrayList();
 
     public static void showOrder(Stage primaryStage, String firstName, String lastName) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
-
+    
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
         Button fishMenuButton = Functions.createButtonMenu("FISH MENU", Color.LAVENDER);
         Button grillMeatButton = Functions.createButtonMenu("GRILL & MEAT", Color.LAVENDER);
         Button veganButton = Functions.createButtonMenu("VEGAN", Color.LAVENDER);
         Button pitButton = Functions.createButtonMenu("MEAT MAINS", Color.LAVENDER);
         Button chefSpecialButton = Functions.createButtonMenu("CHEF'S SPECIAL", Color.LAVENDER);
-
-        // startersButton.setStyle("-fx-background-image: url('/BlueTerrain/Images/Starter.jpeg');");
-
+    
         startersButton.setOnAction(e -> showMenuItemPopup("Starter", firstName, lastName));
         fishMenuButton.setOnAction(e -> showMenuItemPopup("Fish_Menu", firstName, lastName));
         grillMeatButton.setOnAction(e -> showMenuItemPopup("Grill_Meat", firstName, lastName));
         veganButton.setOnAction(e -> showMenuItemPopup("Vegan", firstName, lastName));
         pitButton.setOnAction(e -> showMenuItemPopup("Meat Main", firstName, lastName));
         chefSpecialButton.setOnAction(e -> showMenuItemPopup("Chef special", firstName, lastName));
-
+    
         VBox leftBox = Functions.createButtonVBoxMenu(startersButton, fishMenuButton);
         VBox centreBox = Functions.createButtonVBoxMenu(grillMeatButton, pitButton);
         VBox rightBox = Functions.createButtonVBoxMenu(veganButton, chefSpecialButton);
-
+    
         HBox buttonsBox = new HBox(10);
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
-
+    
         Button closeButton = new Button("Close");
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
         closeButton.setOnAction(e -> {
             Bookings bookings = new Bookings();
-            bookings.start(primaryStage,firstName,lastName);
+            bookings.start(primaryStage, firstName, lastName);
         });
-
-        root.getChildren().addAll(Functions.welcomePane(), buttonsBox, closeButton);
+    
+        Button viewCartButton = new Button("View My Cart");
+        viewCartButton.setOnAction(e -> viewCart(firstName, lastName)); // Pass firstName and lastName to viewCart
+    
+        root.getChildren().addAll(Functions.welcomePane(), buttonsBox, viewCartButton, closeButton);
         Functions.setupAndShowScene(primaryStage, root);
     }
-
     
 
     @SuppressWarnings({ "unchecked", "deprecation" })
@@ -112,28 +116,32 @@ public class CustomerOrder {
 
         tableView.setItems(itemList);
 
-        Button viewCartButton = new Button("View My Cart");
-        viewCartButton.setOnAction(e -> viewCart(itemList));
-
-        Button confirmOrderButton = new Button("Confirm Order");
-        confirmOrderButton.setOnAction(e -> confirmOrder(itemList, firstName, lastName));
-
-        HBox buttonBox = new HBox(10);
-        buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.getChildren().addAll(viewCartButton, confirmOrderButton);
+        Button addOrderButton = new Button("Add to Order Cart");
+        addOrderButton.setOnAction(e -> {
+            addToCart(itemList);
+            popupStage.close(); // Close the popupStage
+        });
 
         VBox popupRoot = new VBox(10);
         popupRoot.setAlignment(Pos.CENTER);
         popupRoot.setPadding(new Insets(20));
-        popupRoot.getChildren().addAll(tableView, buttonBox);
+        popupRoot.getChildren().addAll(tableView, addOrderButton);
 
         Scene popupScene = new Scene(popupRoot, 800, 400);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
 
+    private static void addToCart(ObservableList<Item> itemList) {
+        for (Item item : itemList) {
+            if (item.isSelected()) {
+                selectedItems.add(item);
+            }
+        }
+    }
+
     @SuppressWarnings({ "unchecked", "deprecation" })
-    private static void viewCart(ObservableList<Item> itemList) {
+    private static void viewCart(String firstName, String lastName) {
         Stage cartStage = new Stage();
         cartStage.initModality(Modality.APPLICATION_MODAL);
         cartStage.setTitle("My Cart");
@@ -155,22 +163,17 @@ public class CustomerOrder {
     
         cartTableView.getColumns().addAll(slNoColumn, itemNameColumn, itemPriceColumn);
     
-        // Filter out only the selected items
-        ObservableList<Item> selectedItems = FXCollections.observableArrayList();
-        for (Item item : itemList) {
-            if (item.isSelected()) {
-                selectedItems.add(item);
-            }
-        }
-    
         cartTableView.setItems(selectedItems);
+    
+        Button confirmOrderButton = new Button("Confirm Order");
+        confirmOrderButton.setOnAction(e -> confirmOrder(selectedItems, firstName, lastName));
     
         VBox cartRoot = new VBox(10);
         cartRoot.setAlignment(Pos.CENTER);
         cartRoot.setPadding(new Insets(20));
-        cartRoot.getChildren().addAll(cartTableView);
+        cartRoot.getChildren().addAll(cartTableView, confirmOrderButton);
     
-        Scene cartScene = new Scene(cartRoot, 400, 300);
+        Scene cartScene = new Scene(cartRoot, 700, 500);
         cartStage.setScene(cartScene);
         cartStage.showAndWait();
     }
@@ -223,11 +226,13 @@ public class CustomerOrder {
         VBox confirmationRoot = new VBox(20);
         confirmationRoot.setAlignment(Pos.CENTER);
         confirmationRoot.setPadding(new Insets(20));
-        confirmationRoot.getChildren().addAll(new Label("Order confirmed successfully!"));
+        confirmationRoot.getChildren().addAll(new Label("Order created successfully, View your orders in My Orders"));
+        confirmationRoot.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 
-        Scene confirmationScene = new Scene(confirmationRoot, 300, 100);
+        Scene confirmationScene = new Scene(confirmationRoot, 400, 200);
         confirmationStage.setScene(confirmationScene);
         confirmationStage.showAndWait();
+
     }
 
     private static int getCustomerId(String firstName, String lastName) {
