@@ -22,7 +22,6 @@ public class Order {
 
     }
 
-    // Constructor
     public Order(int orderId, int customerId, String status, int chefStatus, long startTime, long pickupTime, String deliveryStatus, long deliveryTime) {
         this.orderId = orderId;
         this.customerId = customerId;

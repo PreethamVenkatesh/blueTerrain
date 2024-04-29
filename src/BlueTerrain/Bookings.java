@@ -70,42 +70,46 @@ public class Bookings {
 
 
         Button orderNowButton = (Button) centreBox.getChildren().get(0);
-        orderNowButton.setOnAction(e -> Menu.showMenu(primaryStage));
+        orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName));
 
         // Set action for TAKE AWAY button
         Button takeAwayButton = (Button) rightBox.getChildren().get(0);
         takeAwayButton.setOnAction(e -> Menu.showMenu(primaryStage));
     }
 
-    
-
     private void bookTablePopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Book Table");
-    
+
         GridPane gridPane = new GridPane();
-        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setAlignment(Pos.TOP_CENTER);
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20));
+        gridPane.setStyle("-fx-background-color: lightblue;");
     
-        Label tableTypeLabel = new Label("Table Type:");
+        Label tableTypeLabel = new Label("Number of Guests:");
+        tableTypeLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-alignment: CENTER;");
         ComboBox<String> tableTypeComboBox = new ComboBox<>();
-        tableTypeComboBox.getItems().addAll("2 seats", "4 seats", "8 seats");
+        tableTypeComboBox.getItems().addAll("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
     
         Label dateLabel = new Label("Date:");
+        dateLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-alignment: CENTER;");
         TextField dateTextField = new TextField();
         dateTextField.setPromptText("yyyy-mm-dd");
     
         Label timeLabel = new Label("Time:");
+        timeLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-alignment: CENTER;");
         ComboBox<String> timeComboBox = new ComboBox<>();
         for (int hour = 11; hour <= 22; hour++) {
             timeComboBox.getItems().add(String.format("%02d:00", hour)); 
         }
     
         Button confirmButton = new Button("Confirm");
+        confirmButton.setStyle("-fx-font-size: 16;");
         Button cancelButton = new Button("Cancel");
+        cancelButton.setStyle("-fx-font-size: 16;");
     
         HBox buttonBox = new HBox(10);
         buttonBox.setAlignment(Pos.CENTER);
@@ -120,7 +124,7 @@ public class Bookings {
         gridPane.add(buttonBox, 0, 3, 2, 1);
     
         VBox popupRoot = new VBox(10);
-        popupRoot.setAlignment(Pos.CENTER);
+        popupRoot.setAlignment(Pos.TOP_CENTER);
         popupRoot.setPadding(new Insets(20));
         popupRoot.getChildren().addAll(gridPane); 
     
@@ -142,15 +146,13 @@ public class Bookings {
     }
 
     private void insertBooking(int customerId, String tableType, String date, String time) {
-
-        int numOfSeats = Integer.parseInt(tableType.split(" ")[0]); 
     
-        String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?,?)";
+        String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection connection = Functions.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, customerId);
-            preparedStatement.setInt(2, numOfSeats); 
+            preparedStatement.setString(2, tableType); 
             preparedStatement.setString(3, date); 
             preparedStatement.setString(4, time);
             preparedStatement.setBoolean(5, false);

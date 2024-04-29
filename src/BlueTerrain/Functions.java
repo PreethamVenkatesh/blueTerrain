@@ -42,11 +42,9 @@ public class Functions {
     public static Connection getConnection() {
         Connection connection = null;
         try {
-                 
-            String databaseName = "cafedb";
-    String USERNAME = "root";
-    String PASSWORD = "2360313";
-    String JDBC_URL = "jdbc:mysql://127.0.0.1:3306/" + databaseName;
+            String JDBC_URL = "jdbc:mysql://localhost:3306/BlueTerrain_Restaurant";
+            String USERNAME = "root";
+            String PASSWORD = "";
 
             connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD);
         } catch (SQLException e) {
@@ -91,7 +89,7 @@ public class Functions {
 
     public static VBox commonHeader(String imagePath) {
         VBox root = Functions.createRootVBox();
-        root.setAlignment(Pos.TOP_CENTER); // Default alignment
+        root.setAlignment(Pos.TOP_CENTER); 
         Background background = Functions.backGroundImage(imagePath);
         root.setBackground(background);
         return root;
@@ -174,6 +172,32 @@ public class Functions {
         button.setTextFill(Color.DARKBLUE);
         button.setBackground(new Background(new BackgroundFill(bgColor, CornerRadii.EMPTY, Insets.EMPTY)));
         button.setPrefSize(150, 150);
+
+        button.setOnMouseEntered(event -> {
+            Button sourceButton = (Button) event.getSource();
+            Tooltip tooltip = (Tooltip) sourceButton.getTooltip();
+            if (tooltip != null) {
+                tooltip.show(sourceButton, event.getScreenX(), event.getScreenY() + 15);
+            }
+        });
+
+        button.setOnMouseExited(event -> {
+            Button sourceButton = (Button) event.getSource();
+            Tooltip tooltip = (Tooltip) sourceButton.getTooltip();
+            if (tooltip != null) {
+                tooltip.hide();
+            }
+        });
+
+        return button;
+    }
+
+    public static Button createButtonMenuCustomer(String text, Color bgColor) {
+        Button button = new Button(text);
+        button.setFont(Font.font(18));
+        button.setTextFill(Color.DARKBLUE);
+        button.setBackground(new Background(new BackgroundFill(bgColor, CornerRadii.EMPTY, Insets.EMPTY)));
+        button.setPrefSize(300, 300);
 
         button.setOnMouseEntered(event -> {
             Button sourceButton = (Button) event.getSource();
