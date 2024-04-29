@@ -35,29 +35,43 @@ public class Restaurant {
 
         Label openingHoursLabel = Functions.openingHours();
 
-        VBox leftBox = Functions.createButtonVBox(Color.YELLOW, "BOOKINGS", "MANAGEMENT");
-        VBox centreBox = Functions.createButtonVBox(Color.ORANGE, "MENU", "STAFFS");
-        VBox rightBox = Functions.createButtonVBox(Color.GREENYELLOW, "ORDERS", "REPORTS");
+        VBox bookingBox = Functions.createButtonVBox(Color.YELLOW, "BOOKINGS");
+        VBox managementBox = Functions.createButtonVBox(Color.YELLOW, "MANAGEMENT");
+        VBox menuBox = Functions.createButtonVBox(Color.ORANGE, "MENU");
+        VBox staffsBox = Functions.createButtonVBox(Color.ORANGE, "STAFFS");
+        VBox ordersBox = Functions.createButtonVBox(Color.GREENYELLOW, "ORDERS");
+        VBox reportsBox = Functions.createButtonVBox(Color.GREENYELLOW, "REPORTS");
 
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
+        if (profileType.equals("Manager")) {
+            buttonsBox.getChildren().addAll(bookingBox, menuBox, staffsBox, reportsBox);
+        } else if (profileType.equals("Waiter")) {
+            buttonsBox.getChildren().addAll(managementBox, menuBox, ordersBox);
+        } else if (profileType.equals("Chef")) {
+            buttonsBox.getChildren().addAll(ordersBox);
+        } else if (profileType.equals("Delivery Driver")) {
+            buttonsBox.getChildren().addAll(ordersBox);
+        } else {
+            buttonsBox.getChildren().addAll(bookingBox, managementBox, menuBox, staffsBox, ordersBox, reportsBox);
+        }
 
-        root.getChildren().addAll(Functions.welcomePane(), userDetailsBox, openingHoursLabel, buttonsBox, currentTimeBox);
+        root.getChildren().addAll(Functions.welcomePane(), userDetailsBox, openingHoursLabel, buttonsBox, Functions.logOut(primaryStage));
         Functions.setupAndShowScene(primaryStage, root);
 
-        Button menuButton = (Button) centreBox.getChildren().get(0); 
+        Button menuButton = (Button) menuBox.getChildren().get(0); 
         menuButton.setOnAction(e -> Menu.showMenu(primaryStage));
 
-        Button staffButton = (Button) centreBox.getChildren().get(1); 
+        Button staffButton = (Button) staffsBox.getChildren().get(0); 
         staffButton.setOnAction(e -> Staff.showStaffPopup(primaryStage));
 
-        Button managementButton = (Button) leftBox.getChildren().get(1);
+        Button managementButton = (Button) managementBox.getChildren().get(0);
         managementButton.setOnAction(e -> Management.showManagementPopup(primaryStage));
 
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
         Menu.setProfileType(profileType);
     }
+
 
 }
