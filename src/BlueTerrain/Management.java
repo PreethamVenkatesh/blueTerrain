@@ -147,62 +147,61 @@ public class Management {
     }
 
     @SuppressWarnings({ "deprecation" })
-private static void showPopup2(String title, String[] columnTitles) {
-    Stage popupStage = new Stage();
-    popupStage.initModality(Modality.APPLICATION_MODAL);
-    popupStage.setTitle(title);
+    private static void showPopup2(String title, String[] columnTitles) {
+        Stage popupStage = new Stage();
+        popupStage.initModality(Modality.APPLICATION_MODAL);
+        popupStage.setTitle(title);
 
-    TableView<List<String>> tableView = new TableView<>();
-    tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableView<List<String>> tableView = new TableView<>();
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-    ObservableList<List<String>> itemList = FXCollections.observableArrayList();
+        ObservableList<List<String>> itemList = FXCollections.observableArrayList();
 
-    try (Connection connection = Functions.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(BOOKINGSTATUS_QUERY);
-        ResultSet resultSet = preparedStatement.executeQuery()) {
-        int slNo = 1;
-        while (resultSet.next()) {
-            List<String> rowData = new ArrayList<>();
-            rowData.add(String.valueOf(slNo++));
-            String bookingId = resultSet.getString("bookingId");
-            rowData.add(bookingId); // Adding booking ID
-            itemList.add(rowData);
+        try (Connection connection = Functions.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(BOOKINGSTATUS_QUERY);
+            ResultSet resultSet = preparedStatement.executeQuery()) {
+            int slNo = 1;
+            while (resultSet.next()) {
+                List<String> rowData = new ArrayList<>();
+                rowData.add(String.valueOf(slNo++));
+                String bookingId = resultSet.getString("bookingId");
+                rowData.add(bookingId); // Adding booking ID
+                itemList.add(rowData);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to fetch data - " + ex.getMessage());
         }
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-        System.err.println("Error: Failed to fetch data - " + ex.getMessage());
+
+        TableColumn<List<String>, String> slNoColumn = new TableColumn<>("SL. No.");
+        slNoColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+        slNoColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(0)));
+        tableView.getColumns().add(slNoColumn);
+
+        TableColumn<List<String>, String> bookingIdColumn = new TableColumn<>("BookingID");
+        bookingIdColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+        bookingIdColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(1)));
+        tableView.getColumns().add(bookingIdColumn);
+
+        TableColumn<List<String>, Void> approveColumn = new TableColumn<>("Booking Approvals");
+        approveColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+        approveColumn.setCellFactory(tc -> new ButtonCell());
+        tableView.getColumns().add(approveColumn);
+
+        tableView.setItems(itemList);
+
+        VBox popupRoot = new VBox(10);
+        popupRoot.setAlignment(Pos.CENTER);
+        popupRoot.setPadding(new Insets(20));
+        popupRoot.getChildren().addAll(tableView);
+
+        Scene popupScene = new Scene(popupRoot, 800, 400);
+        popupStage.setScene(popupScene);
+        popupStage.showAndWait();
     }
-
-    TableColumn<List<String>, String> slNoColumn = new TableColumn<>("SL. No.");
-    slNoColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
-    slNoColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(0)));
-    tableView.getColumns().add(slNoColumn);
-
-    TableColumn<List<String>, String> bookingIdColumn = new TableColumn<>("BookingID");
-    bookingIdColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
-    bookingIdColumn.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(1)));
-    tableView.getColumns().add(bookingIdColumn);
-
-    TableColumn<List<String>, Void> approveColumn = new TableColumn<>("Booking Approvals");
-    approveColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
-    approveColumn.setCellFactory(tc -> new ButtonCell());
-    tableView.getColumns().add(approveColumn);
-
-    tableView.setItems(itemList);
-
-    VBox popupRoot = new VBox(10);
-    popupRoot.setAlignment(Pos.CENTER);
-    popupRoot.setPadding(new Insets(20));
-    popupRoot.getChildren().addAll(tableView);
-
-    Scene popupScene = new Scene(popupRoot, 800, 400);
-    popupStage.setScene(popupScene);
-    popupStage.showAndWait();
-}
 
     private static class ButtonCell extends TableCell<List<String>, Void> {
         private final Button approveButton = new Button("Approve");
-        private final Button rejectButton = new Button("Reject");
         private boolean clicked = false;
 
         private ButtonCell() {
@@ -211,24 +210,12 @@ private static void showPopup2(String title, String[] columnTitles) {
                     List<String> rowData = getTableView().getItems().get(getIndex());
                     System.out.println("Approve clicked for booking ID: " + rowData.get(1));
                     clicked = true;
-                    setStyle("-fx-background-color: green;"); 
-                    setGraphic(null);
+                    setStyle("-fx-background-color: green;");
                     setText("Approved");
                     setTextFill(Color.WHITE);
                     setAlignment(Pos.CENTER);
-                }
-            });
-    
-            rejectButton.setOnAction(event -> {
-                if (!clicked) {
-                    List<String> rowData = getTableView().getItems().get(getIndex());
-                    System.out.println("Reject clicked for booking ID: " + rowData.get(1));
-                    clicked = true;
-                    setStyle("-fx-background-color: red;");
-                    setGraphic(null);
-                    setText("Cancelled");
-                    setTextFill(Color.WHITE);
-                    setAlignment(Pos.CENTER);           
+                    setGraphic(null); // Remove the button after clicking
+                    updateBookingStatus(rowData.get(1), true); // Update booking status to true
                 }
             });
         }
@@ -239,20 +226,28 @@ private static void showPopup2(String title, String[] columnTitles) {
             if (empty) {
                 setGraphic(null);
             } else {
-                if (!clicked) { 
-                    HBox buttons = new HBox(10);
-                    buttons.setAlignment(Pos.CENTER);
-                    buttons.getChildren().addAll(approveButton, rejectButton);
-                    setGraphic(buttons);
+                if (!clicked) {
+                    setGraphic(approveButton);
                 } else {
-                    // If a button is clicked, set the text based on the background color
-                    String status = getStyle().contains("green") ? "Approved" : "Cancelled";
-                    setText(status);
+                    // If a button is clicked, set the text to "Approved" in white
+                    setText("Approved");
                     setStyle("-fx-text-fill: white;");
+                    setAlignment(Pos.CENTER);
                 }
             }
         }
+
+        // Method to update booking status in the database
+        private void updateBookingStatus(String bookingId, boolean approved) {
+            try (Connection connection = Functions.getConnection();
+                 PreparedStatement preparedStatement = connection.prepareStatement("UPDATE tableAllocation SET BookingStatus = ? WHERE bookingId = ?")) {
+                preparedStatement.setBoolean(1, approved);
+                preparedStatement.setString(2, bookingId);
+                preparedStatement.executeUpdate();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                System.err.println("Error: Failed to update booking status - " + ex.getMessage());
+            }
+        }
     }
-
 }
-
