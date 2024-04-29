@@ -24,8 +24,11 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -34,11 +37,20 @@ public class Bookings {
     private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
 
     public void start(Stage primaryStage, String firstName, String lastName) {
-        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
+        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Bookings.jpeg");
         Label openingHoursLabel = Functions.openingHours();
 
-        Label userDetailsLabel = new Label("HEY! " + firstName + "" + lastName + "\n\t" + "Our Place or Yours ?");
-        userDetailsLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 20;");
+        StackPane lightBluePadding = new StackPane();
+        lightBluePadding.setPadding(new Insets(20));
+        
+        Label welcomeLabel = new Label("Welcome to BLUE TERRAIN RESTAURANT");
+        welcomeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+        welcomeLabel.setStyle("-fx-text-fill: white; -fx-background-color: #2E5CB8; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
+        
+        lightBluePadding.getChildren().add(welcomeLabel);
+
+        Label userDetailsLabel = new Label("HEY! " + firstName + " " + lastName + " Our Place or Yours ?");
+        userDetailsLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white; -fx-font-size: 20; -fx-background-color: #2E5CB8; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
 
         Functions.setMarginForNode(root, userDetailsLabel, new Insets(20, 20, 20, 0));
         
@@ -50,20 +62,18 @@ public class Bookings {
         buttonsBox.getChildren().addAll(leftBox, centreBox);
 
         Hyperlink myBookings = new Hyperlink("My Bookings");
-        myBookings.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20;");
-
+        myBookings.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20; -fx-background-color: #2E5CB8; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
         myBookings.setOnAction(e -> showBookingPopup(firstName, lastName));
 
         Hyperlink myOrders = new Hyperlink("My Orders");
-        myOrders.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20;");
-
+        myOrders.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20; -fx-background-color: #2E5CB8; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
         myOrders.setOnAction(e -> showOrderPopup(firstName, lastName));
 
         HBox hyperlinkBox = new HBox();
         hyperlinkBox.getChildren().addAll(myBookings, myOrders);
         hyperlinkBox.setAlignment(Pos.CENTER_RIGHT);
         
-        root.getChildren().addAll(Functions.welcomePane(), openingHoursLabel, userDetailsLabel, buttonsBox, hyperlinkBox);
+        root.getChildren().addAll(welcomeLabel, openingHoursLabel, userDetailsLabel, buttonsBox, hyperlinkBox, Functions.logOut(primaryStage));
         Functions.setupAndShowScene(primaryStage, root);
 
         Button bookTableButton = (Button) leftBox.getChildren().get(0); 
@@ -232,7 +242,7 @@ public class Bookings {
         bookingTimeColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
         bookingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("bookingTime"));
 
-        TableColumn<Reservation, Integer> tableTypeColumn = new TableColumn<>("Table Type");
+        TableColumn<Reservation, Integer> tableTypeColumn = new TableColumn<>("Guests");
         tableTypeColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12; -fx-alignment: CENTER;");
         tableTypeColumn.setCellValueFactory(new PropertyValueFactory<>("tableType"));
 

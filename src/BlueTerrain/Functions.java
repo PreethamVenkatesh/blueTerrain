@@ -13,7 +13,11 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -82,7 +86,7 @@ public class Functions {
     }
 
     public static void setupAndShowScene(Stage primaryStage, Parent root) {
-        Scene scene = new Scene(root, 900, 700);
+        Scene scene = new Scene(root, 1200, 700);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -108,7 +112,7 @@ public class Functions {
     public static Label openingHours() {
         Label openingHoursLabel = new Label(OPENING_HOURS);
         openingHoursLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
-        openingHoursLabel.setStyle("-fx-text-fill: white;");
+        openingHoursLabel.setStyle("-fx-text-fill: white; -fx-background-color: #2E5CB8; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
         return openingHoursLabel;
     }
 
@@ -218,16 +222,35 @@ public class Functions {
         return button;
     }
 
-    public static void setTooltip(Button button, ArrayList<String> tooltipTextList) {
-        if (!tooltipTextList.isEmpty()) {
-            StringBuilder tooltipText = new StringBuilder();
-            for (String name : tooltipTextList) {
-                tooltipText.append(name).append("\n");
-            }
-            Tooltip tooltip = new Tooltip(tooltipText.toString());
-            tooltip.setAutoHide(false);
-            button.setTooltip(tooltip);
-        }
+    public static Node logOut(Stage primaryStage) {
+        Button logoutButton = new Button("Logout");
+        logoutButton.setStyle("-fx-background-color: #FF5733; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14;");
+        logoutButton.setOnAction(e -> {
+
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Logout Confirmation");
+            alert.setHeaderText("Are you sure you want to logout?");
+
+            ButtonType confirmButtonType = new ButtonType("Confirm", ButtonData.OK_DONE);
+            ButtonType cancelButtonType = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(confirmButtonType, cancelButtonType);
+
+            // Handle user response
+            alert.showAndWait().ifPresent(response -> {
+                if (response == confirmButtonType) {
+                    // Navigate back to login page
+                    Login login = new Login();
+                    login.start(primaryStage);
+                }
+            });
+        });
+
+        VBox logoutBox = new VBox(20);
+        logoutBox.setAlignment(Pos.BOTTOM_RIGHT);
+        logoutBox.setPadding(new Insets(20));
+        logoutBox.getChildren().addAll(logoutButton);
+
+        return logoutBox;
     }
 
     public static ArrayList<String> fetchDBdata(String itemType, String query) {        
