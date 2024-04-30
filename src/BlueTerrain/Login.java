@@ -107,10 +107,6 @@ private StackPane loginPane;
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
                         String profileType = resultSet.getString("profile_type");
-                        if (loginType.equals(STAFF)) {
-                            boolean approved = resultSet.getBoolean("isApproved");
-                            return new String[]{firstName, lastName, profileType, String.valueOf(approved)};
-                        }
                         return new String[]{firstName, lastName, profileType};
                     } else {
                         String firstName = resultSet.getString("first_name");

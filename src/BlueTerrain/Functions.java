@@ -40,8 +40,9 @@ import javafx.stage.Stage;
 
 public class Functions {
 
-    private static String OPENING_HOURS = "Opening Hours: 11:00 AM - 12:00 PM";
+    private static String OPENING_HOURS = "Opening Hours: 11:00 AM - 11:00 PM";
     private static String BLUE_TERRAIN = "BLUE TERRAIN RESTAURANT";
+
 
     public static Connection getConnection() {
         Connection connection = null;
@@ -121,6 +122,34 @@ public class Functions {
     }
     
     public static HBox createLabeledField(String labelText, String promptText) {
+        HBox box = new HBox(10);
+        Label label = new Label(labelText);
+        label.setFont(new Font(20));
+        label.setStyle("-fx-text-fill: white;");
+        TextField textField = new TextField();
+        textField.setPromptText(promptText);
+        textField.setFont(new Font(15));
+        textField.setMaxWidth(400);
+        box.getChildren().addAll(label, textField);
+        box.setAlignment(Pos.CENTER);
+        return box;
+    }
+
+    public static HBox staffField(String labelText, String promptText) {
+        HBox box = new HBox(10);
+        Label label = new Label(labelText);
+        label.setFont(new Font(20));
+        label.setStyle("-fx-text-fill: darkBlue;");
+        TextField textField = new TextField();
+        textField.setPromptText(promptText);
+        textField.setFont(new Font(15));
+        textField.setMaxWidth(400);
+        box.getChildren().addAll(label, textField);
+        box.setAlignment(Pos.CENTER);
+        return box;
+    }
+
+    public static HBox createSignupField(String labelText, String promptText) {
         HBox box = new HBox(10);
         Label label = new Label(labelText);
         label.setFont(new Font(20));

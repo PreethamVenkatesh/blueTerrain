@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,6 +28,8 @@ import javafx.stage.Stage;
 
 public class CustomerOrder {
 
+    @SuppressWarnings("unused")
+    private static final Node cartTableView = null;
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
     private static ObservableList<Item> selectedItems = FXCollections.observableArrayList();
 
@@ -133,41 +136,47 @@ public class CustomerOrder {
     }
 
     private static void addToCart(ObservableList<Item> itemList) {
+        System.out.println("Adding selected items to cart...");
         for (Item item : itemList) {
-            if (item.isSelected()) {
+            if (item.isSelected() && !selectedItems.contains(item)) {  // Avoid duplicate entries
                 selectedItems.add(item);
+                System.out.println("Added: " + item.getItemName());
             }
         }
     }
-
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    
+    @SuppressWarnings({"deprecation", "unchecked" })
     private static void viewCart(String firstName, String lastName) {
         Stage cartStage = new Stage();
         cartStage.initModality(Modality.APPLICATION_MODAL);
         cartStage.setTitle("My Cart");
-    
+        
         TableView<Item> cartTableView = new TableView<>();
         cartTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    
+        
         TableColumn<Item, Integer> slNoColumn = new TableColumn<>("SL. NO.");
-        slNoColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
         slNoColumn.setCellValueFactory(new PropertyValueFactory<>("slNo"));
-    
+        
         TableColumn<Item, String> itemNameColumn = new TableColumn<>("Item Name");
-        itemNameColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
         itemNameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-    
+        
         TableColumn<Item, Double> itemPriceColumn = new TableColumn<>("Item Price (£)");
-        itemPriceColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
         itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("itemPrice"));
     
         cartTableView.getColumns().addAll(slNoColumn, itemNameColumn, itemPriceColumn);
-    
-        cartTableView.setItems(selectedItems);
-    
+        
+        cartTableView.setItems(selectedItems);  // Bind the selectedItems to the TableView
+        
         Button confirmOrderButton = new Button("Confirm Order");
-        confirmOrderButton.setOnAction(e -> confirmOrder(selectedItems, firstName, lastName));
-    
+        confirmOrderButton.setOnAction(e -> {
+            try {
+                confirmOrder(selectedItems, firstName, lastName, cartStage);
+            } catch (SQLException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        });
+        
         VBox cartRoot = new VBox(10);
         cartRoot.setAlignment(Pos.CENTER);
         cartRoot.setPadding(new Insets(20));
@@ -177,82 +186,100 @@ public class CustomerOrder {
         cartStage.setScene(cartScene);
         cartStage.showAndWait();
     }
-
+    
     private static class ButtonCell extends TableCell<Item, Void> {
         private final Button selectButton = new Button("Select");
-        private boolean clicked = false;
-
+    
         private ButtonCell() {
             selectButton.setOnAction(event -> {
-                if (!clicked) {
-                    Item selectedItem = getTableView().getItems().get(getIndex());
-                    selectedItem.setSelected(!selectedItem.isSelected());
-                    System.out.println("Item selected: " + selectedItem.getItemName());
-                    clicked = true;
-                    setStyle("-fx-background-color: green;");
-                    setGraphic(null);
-                    setText(selectedItem.isSelected() ? "Selected" : "Deselected");
-                    setTextFill(Color.WHITE);
-                    setAlignment(Pos.CENTER);
+                Item selectedItem = getTableView().getItems().get(getIndex());
+                selectedItem.setSelected(!selectedItem.isSelected()); 
+    
+                if (selectedItem.isSelected()) {
+                    selectButton.setText("Remove");
+                    selectButton.setStyle("-fx-background-color: green;");
+                } else {
+                    selectButton.setText("Select");
+                    selectButton.setStyle("-fx-background-color: red;");
                 }
+    
+                System.out.println("Item " + (selectedItem.isSelected() ? "selected: " : "removed: ") + selectedItem.getItemName());
             });
-            setGraphic(selectButton);
+        }
+    
+        @Override
+        protected void updateItem(Void item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                setGraphic(null); 
+            } else {
+                setGraphic(selectButton); 
+            }
         }
     }
-
-    private static void confirmOrder(ObservableList<Item> itemList, String firstName, String lastName) {
+    
+    private static void confirmOrder(ObservableList<Item> itemList, String firstName, String lastName, Stage cartStage) throws SQLException {
+    
         int customerId = getCustomerId(firstName, lastName);
-        System.out.println("Customer ID: " + customerId); 
+        String query = "INSERT INTO orders (customer_id, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?)";
 
-        try (Connection connection = Functions.getConnection()) {
-            String query = "INSERT INTO test_order (itemName, itemPrice, customerId) VALUES (?, ?, ?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                for (Item item : itemList) {
-                    preparedStatement.setString(1, item.getItemName());
-                    preparedStatement.setDouble(2, item.getItemPrice());
-                    preparedStatement.setInt(3, customerId); 
-                    preparedStatement.executeUpdate();
-                }
+        try (Connection connection = Functions.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            for (Item item : itemList) {
+                preparedStatement.setInt(1, customerId);
+                preparedStatement.setString(2, item.getItemName());
+                preparedStatement.setDouble(3, item.getItemPrice());
+                preparedStatement.setString(4, "Pending"); // Assuming 'orderStatus' should be set to 'Pending'
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println("Error: Failed to insert order - " + ex.getMessage());
-        }
-
+        }    
+    
         Stage confirmationStage = new Stage();
         confirmationStage.initModality(Modality.APPLICATION_MODAL);
         confirmationStage.setTitle("Order Confirmation");
-
+    
         VBox confirmationRoot = new VBox(20);
         confirmationRoot.setAlignment(Pos.CENTER);
         confirmationRoot.setPadding(new Insets(20));
-        confirmationRoot.getChildren().addAll(new Label("Order created successfully, View your orders in My Orders"));
+        Button closeConfirmationButton = new Button("Close Confirmation");
+        closeConfirmationButton.setOnAction(event -> {
+            confirmationStage.close();  // Close the confirmation stage
+            cartStage.close();          // Close the cart stage
+        });
+    
+        confirmationRoot.getChildren().addAll(new Label("Order created successfully. View your orders in My Orders"), closeConfirmationButton);
         confirmationRoot.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-
+    
         Scene confirmationScene = new Scene(confirmationRoot, 400, 200);
         confirmationStage.setScene(confirmationScene);
         confirmationStage.showAndWait();
-
     }
-
+    
     private static int getCustomerId(String firstName, String lastName) {
-        int customerId = 0;
-        String query = "SELECT customerId FROM customers WHERE firstName = ? AND lastName = ?";
+        int customerId = 0; 
+                
+        String query = "SELECT customer_id FROM customers WHERE first_name = ? AND last_name = ?";
+        
         try (Connection connection = Functions.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, firstName);
-            preparedStatement.setString(2, lastName);
+                preparedStatement.setString(1, firstName);
+                preparedStatement.setString(2, lastName);
+            
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    customerId = resultSet.getInt("customer_Id");
+                    customerId = resultSet.getInt("customer_id");
                 } else {
-                    System.err.println("Error: Customer ID not found for " + firstName + " " + lastName);
+                    System.out.println("customerId not received");
                 }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            System.err.println("Error: Failed to retrieve customer ID - " + ex.getMessage());
+            System.err.println("Error: Failed to retrieve customer ID");
         }
+        
         return customerId;
     }
 }
