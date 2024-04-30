@@ -79,9 +79,11 @@ public class Bookings {
         Button bookTableButton = (Button) leftBox.getChildren().get(0); 
         bookTableButton.setOnAction(e -> bookTablePopup(firstName, lastName));
 
-
         Button orderNowButton = (Button) centreBox.getChildren().get(0);
         orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName));
+
+        Button ordersButton = (Button) centreBox.getChildren().get(0);
+        ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName));
 
     }
 
@@ -288,70 +290,59 @@ public class Bookings {
         popupStage.showAndWait();
     }
 
-    @SuppressWarnings({ "unchecked", "deprecation" })
-    private static void showOrderPopup(String firstName, String lastName) {
+    @SuppressWarnings({ "deprecation", "unchecked" })
+    public static void showOrderPopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.setTitle("My Bookings");
-    
-        TableView<Reservation> tableView = new TableView<>();
+        popupStage.setTitle("My Orders");
+
+        // Creating a TableView for Orders
+        TableView<Order> tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    
-        TableColumn<Reservation, Integer> slNoColumn = new TableColumn<>("Sl. No.");
-        slNoColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12; -fx-alignment: CENTER;");
-        slNoColumn.setCellValueFactory(new PropertyValueFactory<>("slNo"));
-    
-        TableColumn<Reservation, String> bookingDateColumn = new TableColumn<>("Date");
-        bookingDateColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
-        bookingDateColumn.setCellValueFactory(new PropertyValueFactory<>("bookingDate"));
-        bookingDateColumn.setComparator(Comparator.comparing(String::toString));
 
-        TableColumn<Reservation, String> bookingTimeColumn = new TableColumn<>("Time");
-        bookingTimeColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
-        bookingTimeColumn.setCellValueFactory(new PropertyValueFactory<>("bookingTime"));
+        // Defining columns for the Order TableView
+        TableColumn<Order, Integer> orderIdColumn = new TableColumn<>("Order No.");
+        orderIdColumn.setCellValueFactory(new PropertyValueFactory<>("orderId"));
 
-        TableColumn<Reservation, Integer> tableTypeColumn = new TableColumn<>("Table Type");
-        tableTypeColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12; -fx-alignment: CENTER;");
-        tableTypeColumn.setCellValueFactory(new PropertyValueFactory<>("tableType"));
+        TableColumn<Order, String> itemNameColumn = new TableColumn<>("Item Name");
+        itemNameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
 
-        TableColumn<Reservation, Boolean> bookingStatusColumn = new TableColumn<>("Status");
-        bookingStatusColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
-        bookingStatusColumn.setCellValueFactory(new PropertyValueFactory<>("bookingStatus"));
-    
-        tableView.getColumns().addAll(slNoColumn, bookingDateColumn, bookingTimeColumn, tableTypeColumn, bookingStatusColumn);
-    
-        ObservableList<Reservation> bookingList = FXCollections.observableArrayList();
+        TableColumn<Order, String> itemPriceColumn = new TableColumn<>("Item Price");
+        itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("itemPrice"));
 
-        int customerId = getCustomerId(firstName, lastName); 
-    
-        // try (Connection connection = Functions.getConnection();
-        //      PreparedStatement preparedStatement = connection.prepareStatement(BOOKING_QUERY)) {
-        //     preparedStatement.setInt(1, customerId);
-        //     try (ResultSet resultSet = preparedStatement.executeQuery()) {
-        //         int slNo = 1;
-        //         while (resultSet.next()) {
-        //             String bookingDate = resultSet.getString("date");
-        //             String bookingTime = resultSet.getString("time");
-        //             int tableType = resultSet.getInt("tableType");
-        //             Boolean status = resultSet.getBoolean("isApproved");
-        //             String bookingStatus = status ? "Booked" : "Pending";
-        //             bookingList.add(new Reservation(slNo++, bookingDate, bookingTime, tableType, bookingStatus));
-        //         }
-        //     }
-        // } catch (SQLException ex) {
-        //     ex.printStackTrace();
-        //     System.err.println("Error: Failed to fetch staff profiles - " + ex.getMessage());
-        // }
-        
-        bookingList.sort(Comparator.comparing(Reservation::getBookingDate));
-        tableView.setItems(bookingList);
-    
+        // Adding columns to the TableView
+        tableView.getColumns().addAll(orderIdColumn, itemNameColumn, itemPriceColumn);
+
+        // Creating an ObservableList for Orders
+        ObservableList<Order> orders = FXCollections.observableArrayList();
+
+        // Fetching order data from database
+        String query = "SELECT  orderId, itemName, itemPrice FROM orders";
+        try (Connection connection = Functions.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                orders.add(new Order(
+                    resultSet.getInt("orderId"),
+                    resultSet.getString("itemName"),
+                    resultSet.getDouble("itemPrice")
+                ));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to fetch order details - " + ex.getMessage());
+        }
+
+        // Setting the ObservableList to the TableView
+        tableView.setItems(orders);
+
+        // Setting up the Stage and Scene
         VBox popupRoot = new VBox(10);
         popupRoot.setAlignment(Pos.CENTER);
         popupRoot.setPadding(new Insets(20));
         popupRoot.getChildren().addAll(tableView);
-    
-        Scene popupScene = new Scene(popupRoot, 400, 600);
+
+        Scene popupScene = new Scene(popupRoot, 800, 600);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
