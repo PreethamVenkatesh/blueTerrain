@@ -68,6 +68,9 @@ public class Restaurant {
         Button managementButton = (Button) managementBox.getChildren().get(0);
         managementButton.setOnAction(e -> Management.showManagementPopup(primaryStage));
 
+        Button reportButton = (Button) reportsBox.getChildren().get(0);
+        reportButton.setOnAction(e -> new ReportSelectionScreen().start(primaryStage));
+
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
         Menu.setProfileType(profileType);
