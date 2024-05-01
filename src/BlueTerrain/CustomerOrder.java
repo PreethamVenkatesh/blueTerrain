@@ -33,7 +33,7 @@ public class CustomerOrder {
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
     private static ObservableList<Item> selectedItems = FXCollections.observableArrayList();
 
-    public static void showOrder(Stage primaryStage, String firstName, String lastName) {
+    public static void showOrder(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
     
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
@@ -62,7 +62,7 @@ public class CustomerOrder {
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
         closeButton.setOnAction(e -> {
             Bookings bookings = new Bookings();
-            bookings.start(primaryStage, firstName, lastName);
+            bookings.start(primaryStage, firstName, lastName, loginType, profileType);
         });
     
         Button viewCartButton = new Button("View My Cart");

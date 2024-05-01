@@ -26,6 +26,7 @@ public class Menu {
     static String firstName;
     static String lastName;
     static String profileType;
+    static String loginType;
 
     public static void setFirstName(String firstName) {
         Menu.firstName = firstName;
@@ -39,6 +40,10 @@ public class Menu {
         Menu.profileType = profileType;
     }
 
+    public static void setLoginType(String loginType) {
+        Menu.profileType = loginType;
+    }
+
     public static String getFirstName() {
         return firstName;
     }
@@ -49,6 +54,10 @@ public class Menu {
 
     public static String getProfileType() {
         return profileType;
+    }
+
+    public static String getLoginType() {
+        return loginType;
     }
 
     public static void showMenu(Stage primaryStage) {
