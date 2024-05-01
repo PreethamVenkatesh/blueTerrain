@@ -105,7 +105,7 @@ public class Functions {
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
         closeButton.setOnAction(e -> {
             Restaurant restaurant = new Restaurant();
-            restaurant.start(primaryStage, Menu.getFirstName(), Menu.getLastName(), Menu.getProfileType());
+            restaurant.start(primaryStage, Menu.getFirstName(), Menu.getLastName(), Menu.getProfileType(), Menu.getLoginType());
         });
         return closeButton;
     }

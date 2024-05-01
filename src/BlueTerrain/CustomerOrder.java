@@ -33,7 +33,7 @@ public class CustomerOrder {
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
     private static ObservableList<Item> selectedItems = FXCollections.observableArrayList();
 
-    public static void showOrder(Stage primaryStage, String firstName, String lastName) {
+    public static void showOrder(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
     
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
@@ -60,13 +60,19 @@ public class CustomerOrder {
     
         Button closeButton = new Button("Close");
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
-        closeButton.setOnAction(e -> {
-            Bookings bookings = new Bookings();
-            bookings.start(primaryStage, firstName, lastName);
+        closeButton.setOnAction(e -> { 
+            if (loginType.equals("Customer")) {
+                Bookings bookings = new Bookings();
+                bookings.start(primaryStage, firstName, lastName, loginType, profileType);
+            } else {
+                Restaurant restaurant = new Restaurant();
+                restaurant.start(primaryStage, firstName, lastName, profileType, loginType);
+            }
+            
         });
     
         Button viewCartButton = new Button("View My Cart");
-        viewCartButton.setOnAction(e -> viewCart(firstName, lastName)); // Pass firstName and lastName to viewCart
+        viewCartButton.setOnAction(e -> viewCart(firstName, lastName));
     
         root.getChildren().addAll(Functions.welcomePane(), buttonsBox, viewCartButton, closeButton);
         Functions.setupAndShowScene(primaryStage, root);
@@ -172,7 +178,6 @@ public class CustomerOrder {
             try {
                 confirmOrder(selectedItems, firstName, lastName, cartStage);
             } catch (SQLException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         });

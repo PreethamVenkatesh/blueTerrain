@@ -80,11 +80,11 @@ private StackPane loginPane;
                 String profileType = userDetails[2];
                 if (loginType.equals(STAFF)) { 
                     Restaurant restaurant = new Restaurant();
-                    restaurant.start(primaryStage, firstName, lastName, profileType);
+                    restaurant.start(primaryStage, firstName, lastName, profileType, loginType);
                 } else if (loginType.equals(CUSTOMER))
                  {
                     Bookings bookings = new Bookings();
-                    bookings.start(primaryStage,firstName,lastName);
+                    bookings.start(primaryStage,firstName,lastName, loginType, profileType);
                 } else {
                     errorMessage.setText("Customer login development in progress");
                 }
