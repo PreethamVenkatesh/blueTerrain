@@ -26,7 +26,6 @@ public class Menu {
     static String firstName;
     static String lastName;
     static String profileType;
-    static String loginType;
 
     public static void setFirstName(String firstName) {
         Menu.firstName = firstName;
@@ -38,10 +37,6 @@ public class Menu {
 
     public static void setProfileType(String profileType) {
         Menu.profileType = profileType;
-    }
-
-    public static void setLoginType(String loginType) {
-        Menu.loginType = loginType;
     }
 
     public static String getFirstName() {
@@ -56,10 +51,6 @@ public class Menu {
         return profileType;
     }
 
-    public static String getLoginType() {
-        return loginType;
-    }
-
     public static void showMenu(Stage primaryStage) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
@@ -68,14 +59,14 @@ public class Menu {
         Button grillMeatButton = Functions.createButtonMenu("GRILL & MEAT", Color.LAVENDER);
         Button veganButton = Functions.createButtonMenu("VEGAN", Color.LAVENDER);
         Button pitButton = Functions.createButtonMenu("MEAT MAINS", Color.LAVENDER);
-        Button chefSpecialButton = Functions.createButtonMenu("CHEF'S SPECIAL", Color.LAVENDER);
+        Button chefSpecialButton = Functions.createButtonMenu("CHEF SPECIAL", Color.LAVENDER);
 
         startersButton.setOnAction(e -> showMenuItemPopup("Starter"));
         fishMenuButton.setOnAction(e -> showMenuItemPopup("Fish_Menu"));
         grillMeatButton.setOnAction(e -> showMenuItemPopup("Grill_Meat"));
         veganButton.setOnAction(e -> showMenuItemPopup("Vegan"));
         pitButton.setOnAction(e -> showMenuItemPopup("Meat Main"));
-        chefSpecialButton.setOnAction(e -> showMenuItemPopup("Chef special"));
+        chefSpecialButton.setOnAction(e -> showMenuItemPopup("Chef_Special"));
 
         VBox leftBox = Functions.createButtonVBoxMenu(startersButton, fishMenuButton);
         VBox centreBox = Functions.createButtonVBoxMenu(grillMeatButton, pitButton);
