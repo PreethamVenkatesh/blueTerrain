@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 public class Restaurant {
 
-    public void start(Stage primaryStage, String firstName, String lastName, String profileType) {
+    public void start(Stage primaryStage, String firstName, String lastName, String profileType, String loginType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
         LocalDateTime now = LocalDateTime.now();
