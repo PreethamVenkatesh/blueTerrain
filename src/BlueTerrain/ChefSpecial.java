@@ -28,11 +28,8 @@ public class ChefSpecial {
         HBox specialDishField = Functions.createLabeledField("\tChef Special", "Enter Chef Special");
         specialDishField.setAlignment(Pos.TOP_CENTER);
 
-        HBox specialDishPrice = Functions.createLabeledField("\tPrice", "Enter Price of the Dish");
+        HBox specialDishPrice = Functions.createLabeledField("\tItem Price (£)", "Enter Price of the Dish");
         specialDishPrice.setAlignment(Pos.TOP_CENTER);
-
-        HBox specialDishType = Functions.createLabeledField("\tType", "Enter the type of the Dish");
-        specialDishType.setAlignment(Pos.TOP_CENTER);
         
         Button confirmButton = new Button("Confirm");
 
@@ -42,7 +39,6 @@ public class ChefSpecial {
 
         Functions.setMarginForNode(root, specialDishField, new Insets(5, 5, 5, 0));
         Functions.setMarginForNode(root, specialDishPrice, new Insets(5, 5, 5, 0));
-        Functions.setMarginForNode(root, specialDishType, new Insets(5, 5, 5, 0));
         Functions.setMarginForNode(root, buttonBox, new Insets(10, 10, 10, 0));
 
         // Add action to the confirm button
@@ -52,31 +48,27 @@ public class ChefSpecial {
 
             TextField dishPrice = (TextField) specialDishPrice.getChildren().get(1);
             double specialItemPrice = Double.parseDouble(dishPrice.getText());
-            
-            TextField dishType = (TextField) specialDishType.getChildren().get(1);
-            String specialdishType = dishType.getText();
 
-            insertIntoChefSpecial(specialDishText, specialItemPrice, specialdishType);
+            insertIntoChefSpecial(specialDishText, specialItemPrice);
 
             // Display confirmation popup
             displayPopup("Chef Special Details confirmed");
         });
 
         // Add label, text field, and confirm button to the root VBox
-        root.getChildren().addAll(Functions.welcomePane(), specialDishField, specialDishPrice, specialDishType, buttonBox);
+        root.getChildren().addAll(Functions.welcomePane(), specialDishField, specialDishPrice, buttonBox);
 
         // Show the stage with the updated root
         Functions.setupAndShowScene(primaryStage, root);
     }
 
-    private static void insertIntoChefSpecial(String itemName, double specialItemPrice, String itemType) {
+    private static void insertIntoChefSpecial(String itemName, double specialItemPrice) {
         try (Connection connection = Functions.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
-                     "INSERT INTO ChefSpecial (ItemName, ItemValue, ItemType) VALUES (?, ?, ?)")) {
+                     "INSERT INTO Menu (ItemName, ItemValue, ItemType) VALUES (?, ?, 'Chef_Special');")) {
             // Set parameters for the prepared statement
             preparedStatement.setString(1, itemName);
             preparedStatement.setDouble(2, specialItemPrice);
-            preparedStatement.setString(3, itemType);
 
             // Execute the update
             preparedStatement.executeUpdate();
@@ -97,7 +89,7 @@ public class ChefSpecial {
         vbox.setPrefWidth(400); // Set the preferred width
         vbox.setPrefHeight(200); // Set the preferred height
         alert.getDialogPane().setContent(vbox);
-
+        
         // Show the popup
         alert.showAndWait();
     }
