@@ -72,6 +72,9 @@ public class Restaurant {
         Button chefSpecialButton = (Button) chefSpecialBox.getChildren().get(0);
         chefSpecialButton.setOnAction(e -> ChefSpecial.showChefSpecialPopup(primaryStage));
 
+        Button reportsButton = (Button) reportsBox.getChildren().get(0);
+        reportsButton.setOnAction(e -> Reports.showReportsPopup(primaryStage));
+
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
         Menu.setProfileType(profileType);
