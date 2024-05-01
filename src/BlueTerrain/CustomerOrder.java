@@ -33,7 +33,7 @@ public class CustomerOrder {
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
     private static ObservableList<Item> selectedItems = FXCollections.observableArrayList();
 
-    public static void showOrder(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
+    public static void showOrder(Stage primaryStage, String firstName, String lastName) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
     
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
@@ -41,14 +41,14 @@ public class CustomerOrder {
         Button grillMeatButton = Functions.createButtonMenu("GRILL & MEAT", Color.LAVENDER);
         Button veganButton = Functions.createButtonMenu("VEGAN", Color.LAVENDER);
         Button pitButton = Functions.createButtonMenu("MEAT MAINS", Color.LAVENDER);
-        Button chefSpecialButton = Functions.createButtonMenu("CHEF'S SPECIAL", Color.LAVENDER);
+        Button chefSpecialButton = Functions.createButtonMenu("CHEF SPECIAL", Color.LAVENDER);
     
         startersButton.setOnAction(e -> showMenuItemPopup("Starter", firstName, lastName));
         fishMenuButton.setOnAction(e -> showMenuItemPopup("Fish_Menu", firstName, lastName));
         grillMeatButton.setOnAction(e -> showMenuItemPopup("Grill_Meat", firstName, lastName));
         veganButton.setOnAction(e -> showMenuItemPopup("Vegan", firstName, lastName));
         pitButton.setOnAction(e -> showMenuItemPopup("Meat Main", firstName, lastName));
-        chefSpecialButton.setOnAction(e -> showMenuItemPopup("Chef special", firstName, lastName));
+        chefSpecialButton.setOnAction(e -> showMenuItemPopup("Chef_Special", firstName, lastName));
     
         VBox leftBox = Functions.createButtonVBoxMenu(startersButton, fishMenuButton);
         VBox centreBox = Functions.createButtonVBoxMenu(grillMeatButton, pitButton);
@@ -60,19 +60,13 @@ public class CustomerOrder {
     
         Button closeButton = new Button("Close");
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
-        closeButton.setOnAction(e -> { 
-            if (loginType.equals("Customer")) {
-                Bookings bookings = new Bookings();
-                bookings.start(primaryStage, firstName, lastName, loginType, profileType);
-            } else {
-                Restaurant restaurant = new Restaurant();
-                restaurant.start(primaryStage, firstName, lastName, profileType, loginType);
-            }
-            
+        closeButton.setOnAction(e -> {
+            Bookings bookings = new Bookings();
+            bookings.start(primaryStage, firstName, lastName);
         });
     
         Button viewCartButton = new Button("View My Cart");
-        viewCartButton.setOnAction(e -> viewCart(firstName, lastName));
+        viewCartButton.setOnAction(e -> viewCart(firstName, lastName)); // Pass firstName and lastName to viewCart
     
         root.getChildren().addAll(Functions.welcomePane(), buttonsBox, viewCartButton, closeButton);
         Functions.setupAndShowScene(primaryStage, root);
@@ -178,6 +172,7 @@ public class CustomerOrder {
             try {
                 confirmOrder(selectedItems, firstName, lastName, cartStage);
             } catch (SQLException e1) {
+                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         });
