@@ -36,7 +36,7 @@ public class Bookings {
 
     private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
 
-    public void start(Stage primaryStage, String firstName, String lastName) {
+    public void start(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Bookings.jpeg");
         Label openingHoursLabel = Functions.openingHours();
 
@@ -80,10 +80,10 @@ public class Bookings {
         bookTableButton.setOnAction(e -> bookTablePopup(firstName, lastName));
 
         Button orderNowButton = (Button) centreBox.getChildren().get(0);
-        orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName));
+        orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
 
         Button ordersButton = (Button) centreBox.getChildren().get(0);
-        ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName));
+        ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
 
     }
 
@@ -107,7 +107,7 @@ public class Bookings {
         Label dateLabel = new Label("Date:");
         dateLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-alignment: CENTER;");
         TextField dateTextField = new TextField();
-        dateTextField.setPromptText("yyyy-mm-dd");
+        dateTextField.setPromptText("YYYY-MM-DD");
     
         Label timeLabel = new Label("Time:");
         timeLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16; -fx-alignment: CENTER;");
@@ -148,6 +148,10 @@ public class Bookings {
         
             popupStage.close();
             showBookingSuccessMessage();
+        });
+
+        cancelButton.setOnAction(e -> {
+            popupStage.close();
         });
     
         Scene popupScene = new Scene(popupRoot, 400, 400);

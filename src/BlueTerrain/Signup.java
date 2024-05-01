@@ -4,11 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -25,21 +22,14 @@ public class Signup {
         signupLabel.setFont(new Font(20)); 
         signupLabel.setStyle("-fx-text-fill: yellow;");
 
+        Label noteLabel = new Label("After Signup you will be navigated back to Login page");
+        noteLabel.setFont(new Font(16)); 
+        noteLabel.setStyle("-fx-text-fill: yellow;");
+
         HBox firstNameBox = Functions.createLabeledField("First Name", "Enter your First Name");
         HBox lastNameBox = Functions.createLabeledField("Last Name", "Enter your Last Name");
         HBox addressBox = Functions.createLabeledField("Address     ", "Enter your Address");
         Button signUpButton = Functions.createButton("Sign Up");
-
-        HBox profileTypeBox = new HBox(10);
-        profileTypeBox.setAlignment(Pos.CENTER);
-        Label profileTypeLabel = new Label("Select Profile Type");
-        profileTypeLabel.setFont(new Font(15));
-        profileTypeLabel.setStyle("-fx-text-fill: white;");
-        ChoiceBox<String> profileTypeChoiceBox = new 
-            ChoiceBox<>(FXCollections.observableArrayList("Waiter", "Chef", "Delivery Driver", "Manager"));
-        profileTypeChoiceBox.getSelectionModel().selectFirst(); 
-        profileTypeChoiceBox.setStyle("-fx-text-fill: black;");
-        profileTypeBox.getChildren().addAll(profileTypeLabel, profileTypeChoiceBox);
 
         Hyperlink loginLink = new Hyperlink("Aleady have an account? Return to Login page");
         loginLink.setFont(new Font(15));
@@ -59,7 +49,7 @@ public class Signup {
             String firstName = ((TextField) firstNameBox.getChildren().get(1)).getText();
             String lastName = ((TextField) lastNameBox.getChildren().get(1)).getText();
             String address = ((TextField) addressBox.getChildren().get(1)).getText();
-            String tableName = "staffs";
+            String tableName = "customers";
 
             try {
                 Connection connection = Functions.getConnection();
@@ -67,7 +57,7 @@ public class Signup {
                 PreparedStatement preparedStatement = connection.prepareStatement(query);
                 preparedStatement.setString(1, firstName);
                 preparedStatement.setString(2, lastName);
-                preparedStatement.setString(4, address);
+                preparedStatement.setString(3, address);
                 preparedStatement.executeUpdate();
 
                 System.out.println("User signed up successfully!");
@@ -80,7 +70,7 @@ public class Signup {
         });
 
     
-        root.getChildren().addAll(Functions.welcomePane(), signupLabel, firstNameBox, lastNameBox, addressBox, signUpButton, loginLink);
+        root.getChildren().addAll(Functions.welcomePane(), signupLabel, firstNameBox, lastNameBox, addressBox, signUpButton,noteLabel, loginLink);
         Functions.setupAndShowScene(primaryStage, root); 
     }
 }

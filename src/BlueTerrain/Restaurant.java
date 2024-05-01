@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 
 public class Restaurant {
 
-    public void start(Stage primaryStage, String firstName, String lastName, String profileType) {
+    public void start(Stage primaryStage, String firstName, String lastName, String profileType, String loginType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
         LocalDateTime now = LocalDateTime.now();
@@ -67,6 +67,9 @@ public class Restaurant {
 
         Button managementButton = (Button) managementBox.getChildren().get(0);
         managementButton.setOnAction(e -> Management.showManagementPopup(primaryStage));
+
+        Button ordersButton = (Button) ordersBox.getChildren().get(0);
+        ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
 
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
