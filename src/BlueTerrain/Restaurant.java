@@ -41,6 +41,7 @@ public class Restaurant {
         VBox staffsBox = Functions.createButtonVBox(Color.ORANGE, "STAFFS");
         VBox ordersBox = Functions.createButtonVBox(Color.GREENYELLOW, "ORDERS");
         VBox reportsBox = Functions.createButtonVBox(Color.GREENYELLOW, "REPORTS");
+        VBox chefSpecialBox = Functions.createButtonVBox(Color.GREENYELLOW, "CHEF SPECIAL");
 
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
@@ -49,7 +50,7 @@ public class Restaurant {
         } else if (profileType.equals("Waiter")) {
             buttonsBox.getChildren().addAll(managementBox, menuBox, ordersBox);
         } else if (profileType.equals("Chef")) {
-            buttonsBox.getChildren().addAll(ordersBox);
+            buttonsBox.getChildren().addAll(ordersBox, chefSpecialBox);
         } else if (profileType.equals("Delivery Driver")) {
             buttonsBox.getChildren().addAll(ordersBox);
         } else {
@@ -67,6 +68,9 @@ public class Restaurant {
 
         Button managementButton = (Button) managementBox.getChildren().get(0);
         managementButton.setOnAction(e -> Management.showManagementPopup(primaryStage));
+
+        Button chefSpecialButton = (Button) chefSpecialBox.getChildren().get(0);
+        chefSpecialButton.setOnAction(e -> ChefSpecial.showChefSpecialPopup(primaryStage));
 
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
