@@ -59,14 +59,14 @@ public class Menu {
         Button grillMeatButton = Functions.createButtonMenu("GRILL & MEAT", Color.LAVENDER);
         Button veganButton = Functions.createButtonMenu("VEGAN", Color.LAVENDER);
         Button pitButton = Functions.createButtonMenu("MEAT MAINS", Color.LAVENDER);
-        Button chefSpecialButton = Functions.createButtonMenu("CHEF'S SPECIAL", Color.LAVENDER);
+        Button chefSpecialButton = Functions.createButtonMenu("CHEF SPECIAL", Color.LAVENDER);
 
         startersButton.setOnAction(e -> showMenuItemPopup("Starter"));
         fishMenuButton.setOnAction(e -> showMenuItemPopup("Fish_Menu"));
         grillMeatButton.setOnAction(e -> showMenuItemPopup("Grill_Meat"));
         veganButton.setOnAction(e -> showMenuItemPopup("Vegan"));
         pitButton.setOnAction(e -> showMenuItemPopup("Meat Main"));
-        chefSpecialButton.setOnAction(e -> showMenuItemPopup("Chef special"));
+        chefSpecialButton.setOnAction(e -> showMenuItemPopup("Chef_Special"));
 
         VBox leftBox = Functions.createButtonVBoxMenu(startersButton, fishMenuButton);
         VBox centreBox = Functions.createButtonVBoxMenu(grillMeatButton, pitButton);
