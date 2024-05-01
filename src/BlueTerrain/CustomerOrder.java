@@ -40,14 +40,14 @@ public class CustomerOrder {
         Button fishMenuButton = Functions.createButtonMenu("FISH MENU", Color.LAVENDER);
         Button grillMeatButton = Functions.createButtonMenu("GRILL & MEAT", Color.LAVENDER);
         Button veganButton = Functions.createButtonMenu("VEGAN", Color.LAVENDER);
-        Button pitButton = Functions.createButtonMenu("MEAT MAINS", Color.LAVENDER);
+        Button pitButton = Functions.createButtonMenu("DRINKS", Color.LAVENDER);
         Button chefSpecialButton = Functions.createButtonMenu("CHEF SPECIAL", Color.LAVENDER);
     
         startersButton.setOnAction(e -> showMenuItemPopup("Starter", firstName, lastName));
         fishMenuButton.setOnAction(e -> showMenuItemPopup("Fish_Menu", firstName, lastName));
         grillMeatButton.setOnAction(e -> showMenuItemPopup("Grill_Meat", firstName, lastName));
         veganButton.setOnAction(e -> showMenuItemPopup("Vegan", firstName, lastName));
-        pitButton.setOnAction(e -> showMenuItemPopup("Meat Main", firstName, lastName));
+        pitButton.setOnAction(e -> showMenuItemPopup("Drinks", firstName, lastName));
         chefSpecialButton.setOnAction(e -> showMenuItemPopup("Chef_Special", firstName, lastName));
     
         VBox leftBox = Functions.createButtonVBoxMenu(startersButton, fishMenuButton);
