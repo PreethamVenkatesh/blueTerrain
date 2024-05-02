@@ -26,7 +26,7 @@ import javafx.stage.Stage;
  * 
  * <p>This class also includes methods to set and get user profile information.</p>
  * 
- * @author Preetham
+ * @author Preetham Venkatesh
  */
 public class Menu {
 
@@ -118,7 +118,7 @@ public class Menu {
      */
     public static void showMenu(Stage primaryStage) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
-
+        //the colour and text details to be displayed on the buttons created in the Menu
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
         Button fishMenuButton = Functions.createButtonMenu("FISH MENU", Color.LAVENDER);
         Button grillMeatButton = Functions.createButtonMenu("GRILL & MEAT", Color.LAVENDER);
