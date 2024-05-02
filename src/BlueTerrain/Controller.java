@@ -3,7 +3,8 @@ package BlueTerrain;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 /**
- * The Controller class controls the behavior of the FXML view.
+ * The Controller class controls the behavior of the FXML view
+ * @author Preetham Venkatesh
  */
 public class Controller {
     
@@ -11,9 +12,9 @@ public class Controller {
     private Label label;
 
     /**
-     * Initializes the controller after its root element has been completely processed.
-     * This method is automatically called by the FXMLLoader once all FXML elements have been loaded.
-     * It sets the text of the label to display information about the Java and JavaFX versions.
+     * Initializes the controller after its root element has been completely processed
+     * This method is automatically called by the FXMLLoader once all FXML elements have been loaded
+     * It sets the text of the label to display information about the Java and JavaFX versions
      */
     public void initialize() {
         String javaVersion = System.getProperty("java.version");
