@@ -8,7 +8,7 @@ import javafx.stage.Stage;
  * 
  * <p>This class provides methods to retrieve order details and display orders.</p>
  * 
- * @author Aravind,Clinton
+ * @author Aravind Sivakumar, Clinton Ekhameye
  */
 public class Order {
     private int orderId;
