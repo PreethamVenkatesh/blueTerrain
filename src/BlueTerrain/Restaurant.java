@@ -20,7 +20,7 @@ import javafx.stage.Stage;
  * 
  * <p>It also initializes and handles actions for buttons such as bookings, menu, staff management, orders, reports, and more.</p>
  * 
- * @author Preetham
+ * @author Preetham Venkatesh
  */
 public class Restaurant {
 
@@ -53,7 +53,7 @@ public class Restaurant {
         userDetailsBox.setAlignment(Pos.TOP_LEFT);
 
         Label openingHoursLabel = Functions.openingHours();
-
+        // Creates VBox layouts for various menu buttons with different colors.
         VBox bookingBox = Functions.createButtonVBox(Color.YELLOW, "BOOKINGS");
         VBox managementBox = Functions.createButtonVBox(Color.YELLOW, "MANAGEMENT");
         VBox menuBox = Functions.createButtonVBox(Color.ORANGE, "MENU");
@@ -61,7 +61,7 @@ public class Restaurant {
         VBox ordersBox = Functions.createButtonVBox(Color.GREENYELLOW, "ORDERS");
         VBox reportsBox = Functions.createButtonVBox(Color.GREENYELLOW, "REPORTS");
         VBox chefSpecialBox = Functions.createButtonVBox(Color.GREENYELLOW, "CHEF SPECIAL");
-
+        // Determines which buttons to add based on the user's profile type.
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
         if (profileType.equals("Manager")) {
@@ -78,7 +78,8 @@ public class Restaurant {
 
         root.getChildren().addAll(Functions.welcomePane(), userDetailsBox, openingHoursLabel, buttonsBox, Functions.logOut(primaryStage));
         Functions.setupAndShowScene(primaryStage, root);
-
+        
+        // Sets action events for various menu buttons.
         Button menuButton = (Button) menuBox.getChildren().get(0); 
         menuButton.setOnAction(e -> Menu.showMenu(primaryStage));
 
@@ -96,7 +97,7 @@ public class Restaurant {
 
         Button ordersButton = (Button) ordersBox.getChildren().get(0);
         ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
-
+        // Sets the user's details for the menu.
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
         Menu.setProfileType(profileType);
