@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -61,8 +62,14 @@ public class CustomerOrder {
         Button closeButton = new Button("Close");
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
         closeButton.setOnAction(e -> {
-            Bookings bookings = new Bookings();
-            bookings.start(primaryStage, firstName, lastName, loginType, profileType);
+            
+            if (loginType.equals("Customer")) {
+                Bookings bookings = new Bookings();
+                bookings.start(primaryStage, firstName, lastName, loginType, profileType);
+            } else {
+                Restaurant restaurant = new Restaurant();
+                restaurant.start(primaryStage, firstName, lastName, profileType, loginType);
+            }
         });
     
         Button viewCartButton = new Button("View My Cart");
@@ -219,24 +226,30 @@ public class CustomerOrder {
     }
     
     private static void confirmOrder(ObservableList<Item> itemList, String firstName, String lastName, Stage cartStage) throws SQLException {
-    
         int customerId = getCustomerId(firstName, lastName);
-        String query = "INSERT INTO orders (customer_id, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?)";
-
+        String queryInsertOrder = "INSERT INTO orders (customer_id, OrderNumber, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?, ?)";
+    
+        int orderNumber = generateUniqueOrderNumber();
+    
         try (Connection connection = Functions.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+             PreparedStatement preparedStatementInsertOrder = connection.prepareStatement(queryInsertOrder)) {
+    
             for (Item item : itemList) {
-                preparedStatement.setInt(1, customerId);
-                preparedStatement.setString(2, item.getItemName());
-                preparedStatement.setDouble(3, item.getItemPrice());
-                preparedStatement.setString(4, "Pending"); // Assuming 'orderStatus' should be set to 'Pending'
-                preparedStatement.executeUpdate();
+                preparedStatementInsertOrder.setInt(1, customerId);
+                preparedStatementInsertOrder.setInt(2, orderNumber);
+                preparedStatementInsertOrder.setString(3, item.getItemName());
+                preparedStatementInsertOrder.setDouble(4, item.getItemPrice());
+                preparedStatementInsertOrder.setString(5, "Pending");
+                preparedStatementInsertOrder.executeUpdate();
             }
+    
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println("Error: Failed to insert order - " + ex.getMessage());
-        }    
+            return; // Exit the method if an error occurs
+        }
     
+        // Show order confirmation
         Stage confirmationStage = new Stage();
         confirmationStage.initModality(Modality.APPLICATION_MODAL);
         confirmationStage.setTitle("Order Confirmation");
@@ -250,14 +263,23 @@ public class CustomerOrder {
             cartStage.close();          // Close the cart stage
         });
     
-        confirmationRoot.getChildren().addAll(new Label("Order created successfully. View your orders in My Orders"), closeConfirmationButton);
+        confirmationRoot.getChildren().addAll(new Label("Order created successfully with Order Number: " + orderNumber), closeConfirmationButton);
         confirmationRoot.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
     
         Scene confirmationScene = new Scene(confirmationRoot, 400, 200);
         confirmationStage.setScene(confirmationScene);
         confirmationStage.showAndWait();
     }
-    
+     
+    private static int generateUniqueOrderNumber() {
+        long timestamp = System.currentTimeMillis();
+        Random random = new Random();
+        int randomNumber = random.nextInt(9000) + 1000; 
+        int orderNumber = (int) ((timestamp / 1000) % 1000000) * 10000 + randomNumber;
+        orderNumber = Math.abs(orderNumber);
+        return orderNumber;
+    }
+
     private static int getCustomerId(String firstName, String lastName) {
         int customerId = 0; 
                 
