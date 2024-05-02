@@ -61,8 +61,14 @@ public class CustomerOrder {
         Button closeButton = new Button("Close");
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
         closeButton.setOnAction(e -> {
-            Bookings bookings = new Bookings();
-            bookings.start(primaryStage, firstName, lastName, loginType, profileType);
+            
+            if (loginType.equals("Customer")) {
+                Bookings bookings = new Bookings();
+                bookings.start(primaryStage, firstName, lastName, loginType, profileType);
+            } else {
+                Restaurant restaurant = new Restaurant();
+                restaurant.start(primaryStage, firstName, lastName, profileType, loginType);
+            }
         });
     
         Button viewCartButton = new Button("View My Cart");
