@@ -21,6 +21,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * The Login class manages the login functionality of the application.
+ * It provides methods to authenticate users and display the login interface.
+ * 
+ * @author Preetham
+ */
 public class Login {
 
 @FXML
@@ -33,6 +39,11 @@ private StackPane loginPane;
     private static String CUSTOMER = "Customer";
     private static String STAFF = "Staff";
 
+    /**
+     * Displays the login interface.
+     * 
+     * @param primaryStage The primary stage of the application.
+     */
     public void start(Stage primaryStage) {        
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_BackgroundImage.jpg");
 
@@ -80,11 +91,11 @@ private StackPane loginPane;
                 String profileType = userDetails[2];
                 if (loginType.equals(STAFF)) { 
                     Restaurant restaurant = new Restaurant();
-                    restaurant.start(primaryStage, firstName, lastName, profileType);
+                    restaurant.start(primaryStage, firstName, lastName, profileType, loginType);
                 } else if (loginType.equals(CUSTOMER))
                  {
                     Bookings bookings = new Bookings();
-                    bookings.start(primaryStage,firstName,lastName);
+                    bookings.start(primaryStage,firstName,lastName, loginType, profileType);
                 } else {
                     errorMessage.setText("Customer login development in progress");
                 }
@@ -94,6 +105,13 @@ private StackPane loginPane;
         });
     }
 
+    /**
+     * Authenticates a user based on the provided username and login type.
+     * 
+     * @param username  The username of the user.
+     * @param loginType The type of login (e.g., Customer or Staff).
+     * @return An array containing the user's details if authenticated, or null if authentication fails.
+     */
     private String[] authenticate(String username, String loginType) {
         String tableName = (loginType.equals(CUSTOMER)) ? "customers" : "staffs";
         String query = "SELECT * FROM " + tableName + " WHERE first_name = ?";
@@ -107,10 +125,6 @@ private StackPane loginPane;
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
                         String profileType = resultSet.getString("profile_type");
-                        if (loginType.equals(STAFF)) {
-                            boolean approved = resultSet.getBoolean("isApproved");
-                            return new String[]{firstName, lastName, profileType, String.valueOf(approved)};
-                        }
                         return new String[]{firstName, lastName, profileType};
                     } else {
                         String firstName = resultSet.getString("first_name");
@@ -130,4 +144,3 @@ private StackPane loginPane;
     }
 
 }
-
