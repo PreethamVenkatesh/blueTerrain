@@ -2,7 +2,7 @@ package BlueTerrain;
 
 /**
  * The Profile class represents a user profile.
- * @author Preetham
+ * @author Preetham Venkatesh
  */
 public class Profile {
     private int slNo;
