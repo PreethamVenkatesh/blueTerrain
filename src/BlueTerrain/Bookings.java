@@ -82,8 +82,8 @@ public class Bookings {
         Button orderNowButton = (Button) centreBox.getChildren().get(0);
         orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
 
-        Button ordersButton = (Button) centreBox.getChildren().get(0);
-        ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
+        // Button ordersButton = (Button) centreBox.getChildren().get(0);
+        // ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
 
     }
 

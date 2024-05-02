@@ -75,10 +75,11 @@ public class Restaurant {
         Button reportsButton = (Button) reportsBox.getChildren().get(0);
         reportsButton.setOnAction(e -> Reports.showReportsPopup(primaryStage));
 
+        Button ordersButton = (Button) ordersBox.getChildren().get(0);
+        ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
+
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
         Menu.setProfileType(profileType);
     }
-
-
 }
