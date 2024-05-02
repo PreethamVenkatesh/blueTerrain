@@ -22,10 +22,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 /**
- * The Login class manages the login functionality of the application.
- * It provides methods to authenticate users and display the login interface.
+ * The Login class manages the login functionality of the application
+ * It provides methods to authenticate users and display the login interface
  * 
- * @author Preetham
+ * @author Preetham Venkatesh
  */
 public class Login {
 
@@ -40,20 +40,21 @@ private StackPane loginPane;
     private static String STAFF = "Staff";
 
     /**
-     * Displays the login interface.
+     * Displays the login interface
      * 
-     * @param primaryStage The primary stage of the application.
+     * @param primaryStage The primary stage of the application
      */
     public void start(Stage primaryStage) {        
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_BackgroundImage.jpg");
 
         HBox loginTypeBox = new HBox(10);
         loginTypeBox.setAlignment(Pos.TOP_CENTER);
-        Label loginTypeLabel = new Label(LOGIN_TYPE);
+        Label loginTypeLabel = new Label(LOGIN_TYPE); // Creates a Label to display the login type
         loginTypeLabel.setFont(new Font(20));
         loginTypeLabel.setStyle("-fx-text-fill: white;");
+        // Creates a ChoiceBox for selecting the login type, with options for customer and staff
         ChoiceBox<String> loginTypeChoiceBox = new 
-                ChoiceBox<>(FXCollections.observableArrayList(CUSTOMER, STAFF));
+                ChoiceBox<>(FXCollections.observableArrayList(CUSTOMER, STAFF)); 
         loginTypeChoiceBox.getSelectionModel().selectFirst();
         loginTypeChoiceBox.setStyle("-fx-text-fill: black;");
         loginTypeBox.getChildren().addAll(loginTypeLabel, loginTypeChoiceBox);
