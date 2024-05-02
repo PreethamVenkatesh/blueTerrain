@@ -15,10 +15,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -299,56 +301,130 @@ public class Bookings {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("My Orders");
-
-        // Creating a TableView for Orders
+    
         TableView<Order> tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
-        // Defining columns for the Order TableView
+    
         TableColumn<Order, Integer> orderIdColumn = new TableColumn<>("Order No.");
         orderIdColumn.setCellValueFactory(new PropertyValueFactory<>("orderId"));
-
-        TableColumn<Order, String> itemNameColumn = new TableColumn<>("Item Name");
-        itemNameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
-
-        TableColumn<Order, String> itemPriceColumn = new TableColumn<>("Item Price");
-        itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("itemPrice"));
-
-        // Adding columns to the TableView
-        tableView.getColumns().addAll(orderIdColumn, itemNameColumn, itemPriceColumn);
-
-        // Creating an ObservableList for Orders
+        orderIdColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+    
+        TableColumn<Order, Void> actionColumn = new TableColumn<>("Actions");
+        actionColumn.setSortable(false);
+        actionColumn.setCellValueFactory(param -> new SimpleObjectProperty<>(null));
+        actionColumn.setStyle("-fx-alignment: CENTER;");
+        actionColumn.setCellFactory(param -> new TableCell<Order, Void>() {
+            private final Button button = new Button("View");
+    
+            {
+                button.setOnAction(event -> {
+                    Order order = getTableView().getItems().get(getIndex());
+                    showOrderItemsPopup(order);
+                });
+            }
+    
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(button);
+                }
+            }
+        });
+        
+        tableView.getColumns().addAll(orderIdColumn, actionColumn);
+    
         ObservableList<Order> orders = FXCollections.observableArrayList();
-
-        // Fetching order data from database
-        String query = "SELECT  orderId, itemName, itemPrice FROM orders";
+        int customerId = getCustomerId(firstName, lastName);
+    
+        String query = "SELECT orderId, itemName, itemPrice FROM orders WHERE customer_id = ?";
         try (Connection connection = Functions.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                orders.add(new Order(
-                    resultSet.getInt("orderId"),
-                    resultSet.getString("itemName"),
-                    resultSet.getDouble("itemPrice")
-                ));
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, customerId); // Set the customer ID parameter
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    orders.add(new Order(
+                        resultSet.getInt("orderId"),
+                        resultSet.getString("itemName"),
+                        resultSet.getDouble("itemPrice")
+                    ));
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println("Error: Failed to fetch order details - " + ex.getMessage());
         }
-
-        // Setting the ObservableList to the TableView
+    
         tableView.setItems(orders);
-
-        // Setting up the Stage and Scene
+    
         VBox popupRoot = new VBox(10);
         popupRoot.setAlignment(Pos.CENTER);
         popupRoot.setPadding(new Insets(20));
         popupRoot.getChildren().addAll(tableView);
-
+    
         Scene popupScene = new Scene(popupRoot, 800, 600);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
+    
+    @SuppressWarnings({ "unchecked", "deprecation" })
+    private static void showOrderItemsPopup(Order order) {
+        // Create a new stage for showing order items
+        Stage itemsPopupStage = new Stage();
+        itemsPopupStage.initModality(Modality.APPLICATION_MODAL);
+        itemsPopupStage.setTitle("Order Items");
+    
+        // Create TableView for displaying order items
+        TableView<Item> tableView = new TableView<>();
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    
+        TableColumn<Item, String> itemNameColumn = new TableColumn<>("Item Name");
+        itemNameColumn.setCellValueFactory(new PropertyValueFactory<>("itemName"));
+    
+        TableColumn<Item, Double> itemPriceColumn = new TableColumn<>("Item Price");
+        itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("itemPrice"));
+    
+        // Add columns to TableView
+        tableView.getColumns().addAll(itemNameColumn, itemPriceColumn);
+    
+        // Populate TableView with order items
+        ObservableList<Item> orderItems = FXCollections.observableArrayList();
+    
+        String query = "SELECT itemName, itemPrice FROM orders WHERE orderId = ?";
+        try (Connection connection = Functions.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, order.getOrderId());
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    orderItems.add(new Item(
+                        0, resultSet.getString("itemName"),
+                        resultSet.getDouble("itemPrice"), false
+                    ));
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            System.err.println("Error: Failed to fetch order item details - " + ex.getMessage());
+        }
+    
+        tableView.setItems(orderItems);
+    
+        // Create VBox to hold TableView
+        VBox popupRoot = new VBox(10);
+        popupRoot.setAlignment(Pos.CENTER);
+        popupRoot.setPadding(new Insets(20));
+        popupRoot.getChildren().addAll(tableView);
+    
+        // Create Scene
+        Scene popupScene = new Scene(popupRoot, 400, 300);
+    
+        // Set Scene and show stage
+        itemsPopupStage.setScene(popupScene);
+        itemsPopupStage.showAndWait();
+    }
+    
+    
     
 }

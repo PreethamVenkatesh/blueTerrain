@@ -227,26 +227,42 @@ public class CustomerOrder {
     private static void confirmOrder(ObservableList<Item> itemList, String firstName, String lastName, Stage cartStage) throws SQLException {
     
         int customerId = getCustomerId(firstName, lastName);
-        String query = "INSERT INTO orders (customer_id, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?)";
+        String queryInsertOrder = "INSERT INTO orders (customer_id, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?)";
+        String queryGetOrderId = "SELECT LAST_INSERT_ID()";
+        int orderId;
 
         try (Connection connection = Functions.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            PreparedStatement preparedStatementInsertOrder = connection.prepareStatement(queryInsertOrder);
+            PreparedStatement preparedStatementGetOrderId = connection.prepareStatement(queryGetOrderId)) {
+            
+            preparedStatementInsertOrder.setInt(1, customerId);
+            preparedStatementInsertOrder.setString(4, "Pending"); 
+            
             for (Item item : itemList) {
-                preparedStatement.setInt(1, customerId);
-                preparedStatement.setString(2, item.getItemName());
-                preparedStatement.setDouble(3, item.getItemPrice());
-                preparedStatement.setString(4, "Pending"); // Assuming 'orderStatus' should be set to 'Pending'
-                preparedStatement.executeUpdate();
+                preparedStatementInsertOrder.setString(2, item.getItemName());
+                preparedStatementInsertOrder.setDouble(3, item.getItemPrice());
+                preparedStatementInsertOrder.executeUpdate();
+            }
+
+            // Retrieve the generated order ID
+            try (ResultSet resultSet = preparedStatementGetOrderId.executeQuery()) {
+                if (resultSet.next()) {
+                    orderId = resultSet.getInt(1);
+                } else {
+                    throw new SQLException("Failed to retrieve the order ID.");
+                }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println("Error: Failed to insert order - " + ex.getMessage());
-        }    
-    
+            return; // Exit the method if an error occurs
+        }
+
+        // Show order confirmation
         Stage confirmationStage = new Stage();
         confirmationStage.initModality(Modality.APPLICATION_MODAL);
         confirmationStage.setTitle("Order Confirmation");
-    
+
         VBox confirmationRoot = new VBox(20);
         confirmationRoot.setAlignment(Pos.CENTER);
         confirmationRoot.setPadding(new Insets(20));
@@ -255,10 +271,10 @@ public class CustomerOrder {
             confirmationStage.close();  // Close the confirmation stage
             cartStage.close();          // Close the cart stage
         });
-    
-        confirmationRoot.getChildren().addAll(new Label("Order created successfully. View your orders in My Orders"), closeConfirmationButton);
+
+        confirmationRoot.getChildren().addAll(new Label("Order created successfully with Order ID: " + orderId), closeConfirmationButton);
         confirmationRoot.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-    
+
         Scene confirmationScene = new Scene(confirmationRoot, 400, 200);
         confirmationStage.setScene(confirmationScene);
         confirmationStage.showAndWait();
