@@ -41,7 +41,7 @@ import javafx.util.Callback;
  * @author Preetham
  */
 public class Staff {
-
+    // SQL query to retrieve staff names based on profile type
     private static String STAFF_QUERY = "SELECT CONCAT(first_name, ' ', last_name) AS result_column FROM staffs WHERE profile_type = ?";
     
     /**
@@ -51,12 +51,14 @@ public class Staff {
      */
     public static void showStaffPopup(Stage primaryStage) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
-
+        
+        // Creating buttons for different staff types
         Button managerButton = Functions.createButtonMenu("MANAGERS", Color.LAVENDER);
         Button chefButton = Functions.createButtonMenu("CHEFS", Color.LAVENDER);
         Button waiterButton = Functions.createButtonMenu("WAITERS", Color.LAVENDER);
         Button driverButton = Functions.createButtonMenu("DELIVERY\nDRIVERS", Color.LAVENDER);
-
+        
+        // Setting actions for each button
         managerButton.setOnAction(e -> showStaffPopup("Manager"));
         chefButton.setOnAction(e -> showStaffPopup("Chef"));
         waiterButton.setOnAction(e -> showStaffPopup("Waiter"));
@@ -72,7 +74,8 @@ public class Staff {
         addStaffButton.setAlignment(Pos.BOTTOM_RIGHT);
         addStaffButton.setSpacing(10); 
         addStaffButton.setPadding(new Insets(20));
-
+        
+        // Creating a hyperlink to add new staff
         Hyperlink addStaffLink = new Hyperlink("Add Staff");
         addStaffLink.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
         addStaffLink.setOnAction(e -> {
@@ -95,6 +98,7 @@ public class Staff {
             profileTypeBox.getChildren().addAll(profileTypeLabel, profileTypeChoiceBox);
 
             Button addButton = new Button("Add");
+            // Retrieving entered values and inserting into database
             addButton.setOnAction(event -> {
                 String firstName = ((TextField) firstNameBox.getChildren().get(1)).getText();
                 String lastName = ((TextField) lastNameBox.getChildren().get(1)).getText();
@@ -134,13 +138,13 @@ public class Staff {
             addStaffPopup.setScene(addStaffScene);
             addStaffPopup.showAndWait();
         });
-
+         // Creating a hyperlink to delete staff
         Hyperlink deleteStaffLink = new Hyperlink("Delete Staff");
         deleteStaffLink.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
         deleteStaffLink.setOnAction(e -> {
             Stage deleteStaffPopup = new Stage();
             deleteStaffPopup.initModality(Modality.APPLICATION_MODAL);
-            deleteStaffPopup.setTitle(" Staff");
+            deleteStaffPopup.setTitle(" Staff"); // Placeholder for delete staff functionality
         });
 
         addStaffButton.getChildren().addAll(addStaffLink);
