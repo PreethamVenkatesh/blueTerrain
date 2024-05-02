@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -83,9 +85,6 @@ public class Bookings {
 
         Button orderNowButton = (Button) centreBox.getChildren().get(0);
         orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
-
-        // Button ordersButton = (Button) centreBox.getChildren().get(0);
-        // ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
 
     }
 
@@ -308,6 +307,10 @@ public class Bookings {
         TableColumn<Order, Integer> orderIdColumn = new TableColumn<>("Order No.");
         orderIdColumn.setCellValueFactory(new PropertyValueFactory<>("orderId"));
         orderIdColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+
+        TableColumn<Order, String> orderStatusColumn = new TableColumn<>("Order Status");
+        orderStatusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
+        orderStatusColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
     
         TableColumn<Order, Void> actionColumn = new TableColumn<>("Actions");
         actionColumn.setSortable(false);
@@ -334,28 +337,34 @@ public class Bookings {
             }
         });
         
-        tableView.getColumns().addAll(orderIdColumn, actionColumn);
+        tableView.getColumns().addAll(orderIdColumn, orderStatusColumn, actionColumn);
     
         ObservableList<Order> orders = FXCollections.observableArrayList();
         int customerId = getCustomerId(firstName, lastName);
     
-        String query = "SELECT orderId, itemName, itemPrice FROM orders WHERE customer_id = ?";
+        String query = "SELECT orderNumber, orderStatus, itemName, itemPrice FROM orders WHERE customer_id = ?";
         try (Connection connection = Functions.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, customerId); // Set the customer ID parameter
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
+         PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+        preparedStatement.setInt(1, customerId); // Set the customer ID parameter
+        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            Set<Integer> uniqueOrderNumbers = new HashSet<>();
+            while (resultSet.next()) {
+                int orderNumber = resultSet.getInt("orderNumber");
+                if (!uniqueOrderNumbers.contains(orderNumber)) {
+                    uniqueOrderNumbers.add(orderNumber);
                     orders.add(new Order(
-                        resultSet.getInt("orderId"),
-                        resultSet.getString("itemName"),
-                        resultSet.getDouble("itemPrice")
+                            orderNumber,
+                            resultSet.getString("orderStatus"),
+                            resultSet.getString("itemName"),
+                            resultSet.getDouble("itemPrice")
                     ));
                 }
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            System.err.println("Error: Failed to fetch order details - " + ex.getMessage());
         }
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        System.err.println("Error: Failed to fetch order details - " + ex.getMessage());
+    }
     
         tableView.setItems(orders);
     
@@ -368,6 +377,7 @@ public class Bookings {
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
+    
     
     @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showOrderItemsPopup(Order order) {
@@ -392,7 +402,7 @@ public class Bookings {
         // Populate TableView with order items
         ObservableList<Item> orderItems = FXCollections.observableArrayList();
     
-        String query = "SELECT itemName, itemPrice FROM orders WHERE orderId = ?";
+        String query = "SELECT itemName, itemPrice FROM orders WHERE orderNumber = ?";
         try (Connection connection = Functions.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, order.getOrderId());
