@@ -21,7 +21,7 @@ import javafx.stage.Stage;
  * 
  * <p>After signing up, the user is navigated back to the login page.</p>
  * 
- * @author Preetham
+ * @author Preetham Venkatesh
  */
 public class Signup {
     /**
@@ -32,11 +32,11 @@ public class Signup {
      */
     public void start(Stage primaryStage, String defaultSignupType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Signup.png");
-
+        // Creates a Label with a prompt for signing up.
         Label signupLabel = new Label("Are you here for the first time? Signup below");
         signupLabel.setFont(new Font(20)); 
         signupLabel.setStyle("-fx-text-fill: yellow;");
-
+        // Creates a Label with a note regarding the navigation after signing up.
         Label noteLabel = new Label("After Signup you will be navigated back to Login page");
         noteLabel.setFont(new Font(16)); 
         noteLabel.setStyle("-fx-text-fill: yellow;");
@@ -45,7 +45,7 @@ public class Signup {
         HBox lastNameBox = Functions.createLabeledField("Last Name", "Enter your Last Name");
         HBox addressBox = Functions.createLabeledField("Address     ", "Enter your Address");
         Button signUpButton = Functions.createButton("Sign Up");
-
+        // Creates a Hyperlink for navigating back to the login page if the user already has an account.
         Hyperlink loginLink = new Hyperlink("Aleady have an account? Return to Login page");
         loginLink.setFont(new Font(15));
         loginLink.setOnAction(e -> {
