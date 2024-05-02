@@ -30,10 +30,10 @@ import javafx.stage.Stage;
 
 /**
  * The Management class handles management-related functionalities, such as viewing table information,
- * table allocation, and booking status.
+ * managing table allocation, and booking status.
  * It provides methods to display popup windows for each functionality.
  * 
- * @author Preetham
+ * @author Manasa Ramesh
  */
 public class Management {
     private static String BOOKINGID_QUERY = "SELECT bookingId, tableType, tableAllocation FROM bookings";
@@ -93,13 +93,12 @@ public class Management {
 
         ObservableList<List<String>> itemList = FXCollections.observableArrayList();
 
-        // Sample hardcoded data for the table columns
         List<String> rowData1 = new ArrayList<>(Arrays.asList("\n Table 1", "\n Table 5", "\n Table 9", "\n Table 11"));
         List<String> rowData2 = new ArrayList<>(Arrays.asList("\n Table 2", "\n Table 6", "\n Table 10", "\n"));
         List<String> rowData3 = new ArrayList<>(Arrays.asList("\n Table 3", "\n Table 7", "\n ", "\n ")); 
         List<String> rowData4 = new ArrayList<>(Arrays.asList("\n Table 4", "\n Table 8", "\n ", "\n ")); 
            
-           itemList.addAll(rowData1, rowData2, rowData3, rowData4);
+        itemList.addAll(rowData1, rowData2, rowData3, rowData4);//adding all the row details to the tabelview created
 
         for (int i = 0; i < columnTitles.length; i++) {
             final int index = i;
@@ -188,17 +187,17 @@ public class Management {
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
-     /**
+    /**
      * Custom cell factory for ComboBoxCell.
      */
-    // Custom cell factory for ComboBoxCell
     private static class ComboBoxCell extends TableCell<List<String>, String> {
         private final ComboBox<String> comboBox;
         private static final Set<Integer> disabledCells = new HashSet<>();
         
         public ComboBoxCell() {
             comboBox = new ComboBox<>();
-            comboBox.getItems().addAll("Table 1", "Table 2", "Table 3", "Table 4", "Table 5", "Table 6", "Table 7", "Table 8", "Table 9", "Table 10", "Table 11");
+            comboBox.getItems().addAll("Table 1", "Table 2", "Table 3", "Table 4", 
+                                       "Table 5", "Table 6", "Table 7", "Table 8", "Table 9", "Table 10", "Table 11");
             comboBox.setOnAction(event -> {
                 String selectedItem = comboBox.getValue();
                 commitEdit(selectedItem);
@@ -239,7 +238,7 @@ public class Management {
             
             // Update the database here with the new value
             List<String> rowData = getTableView().getItems().get(getIndex());
-            String bookingId = rowData.get(1); // Booking ID
+            String bookingId = rowData.get(1); 
             updateTableAllocation(bookingId, newValue);
         }
     
