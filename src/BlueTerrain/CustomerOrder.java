@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Random;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -225,44 +226,34 @@ public class CustomerOrder {
     }
     
     private static void confirmOrder(ObservableList<Item> itemList, String firstName, String lastName, Stage cartStage) throws SQLException {
-    
         int customerId = getCustomerId(firstName, lastName);
-        String queryInsertOrder = "INSERT INTO orders (customer_id, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?)";
-        String queryGetOrderId = "SELECT LAST_INSERT_ID()";
-        int orderId;
-
+        String queryInsertOrder = "INSERT INTO orders (customer_id, OrderNumber, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?, ?)";
+    
+        int orderNumber = generateUniqueOrderNumber();
+    
         try (Connection connection = Functions.getConnection();
-            PreparedStatement preparedStatementInsertOrder = connection.prepareStatement(queryInsertOrder);
-            PreparedStatement preparedStatementGetOrderId = connection.prepareStatement(queryGetOrderId)) {
-            
-            preparedStatementInsertOrder.setInt(1, customerId);
-            preparedStatementInsertOrder.setString(4, "Pending"); 
-            
+             PreparedStatement preparedStatementInsertOrder = connection.prepareStatement(queryInsertOrder)) {
+    
             for (Item item : itemList) {
-                preparedStatementInsertOrder.setString(2, item.getItemName());
-                preparedStatementInsertOrder.setDouble(3, item.getItemPrice());
+                preparedStatementInsertOrder.setInt(1, customerId);
+                preparedStatementInsertOrder.setInt(2, orderNumber);
+                preparedStatementInsertOrder.setString(3, item.getItemName());
+                preparedStatementInsertOrder.setDouble(4, item.getItemPrice());
+                preparedStatementInsertOrder.setString(5, "Pending");
                 preparedStatementInsertOrder.executeUpdate();
             }
-
-            // Retrieve the generated order ID
-            try (ResultSet resultSet = preparedStatementGetOrderId.executeQuery()) {
-                if (resultSet.next()) {
-                    orderId = resultSet.getInt(1);
-                } else {
-                    throw new SQLException("Failed to retrieve the order ID.");
-                }
-            }
+    
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println("Error: Failed to insert order - " + ex.getMessage());
             return; // Exit the method if an error occurs
         }
-
+    
         // Show order confirmation
         Stage confirmationStage = new Stage();
         confirmationStage.initModality(Modality.APPLICATION_MODAL);
         confirmationStage.setTitle("Order Confirmation");
-
+    
         VBox confirmationRoot = new VBox(20);
         confirmationRoot.setAlignment(Pos.CENTER);
         confirmationRoot.setPadding(new Insets(20));
@@ -271,15 +262,24 @@ public class CustomerOrder {
             confirmationStage.close();  // Close the confirmation stage
             cartStage.close();          // Close the cart stage
         });
-
-        confirmationRoot.getChildren().addAll(new Label("Order created successfully with Order ID: " + orderId), closeConfirmationButton);
+    
+        confirmationRoot.getChildren().addAll(new Label("Order created successfully with Order Number: " + orderNumber), closeConfirmationButton);
         confirmationRoot.setBackground(new Background(new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
-
+    
         Scene confirmationScene = new Scene(confirmationRoot, 400, 200);
         confirmationStage.setScene(confirmationScene);
         confirmationStage.showAndWait();
     }
-    
+     
+    private static int generateUniqueOrderNumber() {
+        long timestamp = System.currentTimeMillis();
+        Random random = new Random();
+        int randomNumber = random.nextInt(9000) + 1000; 
+        int orderNumber = (int) ((timestamp / 1000) % 1000000) * 10000 + randomNumber;
+        orderNumber = Math.abs(orderNumber);
+        return orderNumber;
+    }
+
     private static int getCustomerId(String firstName, String lastName) {
         int customerId = 0; 
                 
