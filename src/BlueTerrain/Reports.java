@@ -29,24 +29,17 @@ import javafx.stage.Stage;
  * 
  * <p>This class contains methods to show each report in a popup window.</p>
  * 
- * @author Manasa
+ * @author Manasa Ramesh
  */
 public class Reports {
-     /**
-     * SQL query to retrieve the most popular item.
-     */
+
+    //SQL query to retrieve the most popular item.
     private static String MOST_POPULAR_ITEM_QUERY = "SELECT itemName FROM orders GROUP BY itemName ORDER BY COUNT(*) DESC LIMIT 1";
-    /**
-     * SQL query to retrieve the busiest period.
-     */
+    //SQL query to retrieve the busiest period.
     private static String BUSIEST_PERIOD = "SELECT date, time FROM bookings GROUP BY date, time ORDER BY COUNT(*) DESC LIMIT 1";
-    /**
-     * SQL query to retrieve the most active customer.
-     */
+    //SQL query to retrieve the most active customer.
     private static String MOST_ACTIVE_CUSTOMER = "SELECT CONCAT(first_name,' ',last_name) AS Customer_Name FROM customers GROUP BY first_name, last_name ORDER BY COUNT(*) DESC LIMIT 1";
-    /**
-     * SQL query to retrieve the staff with the highest hours worked.
-     */
+    //SQL query to retrieve the staff with the highest hours worked.
     private static String HIGHEST_WORKED_STAFF = "SELECT CONCAT(first_name, ' ', last_name) AS Staff_Name, totalHoursWorked  FROM staffs ORDER BY totalHoursWorked DESC LIMIT 1";
 
     /**
@@ -56,7 +49,9 @@ public class Reports {
      */
     public static void showReportsPopup(Stage primaryStage) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
-
+     /* buttons created with display colour and Text to display on the buttons to generate reports 
+        for Most popular item, Busiest Period, Most Active Customer and Highest Hours worked by Staff
+     */
         Button mostPopularItemButton = Functions.createButtonMenu("Most \nPopular \nItem", Color.LAVENDER);
         Button busiestPeriodButton = Functions.createButtonMenu("Busiest \nPeriod", Color.LAVENDER);
         Button mostActiveCustomerButton = Functions.createButtonMenu("Most \nActive \nCustomer", Color.LAVENDER);
