@@ -37,28 +37,28 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
- * The Bookings class represents functionality related to managing restaurant bookings.
- * It provides methods for booking a table, displaying bookings, and displaying orders.
- * @author Aravind,clinton,Preetham
+ * The Bookings class represents functionality related to managing restaurant bookings
+ * It provides methods for booking a table, displaying bookings, and displaying orders
+ * @author Aravind Sivakumar, Clinton Ekhameye, Preetham Venkatesh
  */
 public class Bookings {
 
     /**
-     * The SQL query to retrieve bookings for a specific customer.
+     * The SQL query to retrieve bookings for a specific customer
      */
     private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
 
     /**
      * Starts the booking interface.
      * 
-     * @param primaryStage The primary stage of the JavaFX application.
-     * @param firstName     The first name of the logged-in user.
-     * @param lastName      The last name of the logged-in user.
-     * @param loginType     The type of login (e.g., customer, admin).
-     * @param profileType   The profile type of the user (e.g., gold, silver).
+     * @param primaryStage The primary stage of the JavaFX application
+     * @param firstName     The first name of the logged-in user
+     * @param lastName      The last name of the logged-in user
+     * @param loginType     The type of login (e.g., customer, staff)
+     * @param profileType   The profile type of the user (e.g., chef, waiter, manager, delivery driver)
      */
     public void start(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
-        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Bookings.jpeg");
+        VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Bookings.jpeg"); //setting up the background image when booking is opened
         Label openingHoursLabel = Functions.openingHours();
 
         StackPane lightBluePadding = new StackPane();
@@ -184,15 +184,15 @@ public class Bookings {
     }
 
     /**
-     * Inserts a booking into the database.
+     * Inserts a booking into the database
      * 
-     * @param customerId The ID of the customer making the booking.
-     * @param tableType  The type of table being booked.
-     * @param date       The date of the booking.
-     * @param time       The time of the booking.
+     * @param customerId The ID of the customer making the booking
+     * @param tableType  The type of table being booked
+     * @param date       The date of the booking
+     * @param time       The time of the booking
      */
     private void insertBooking(int customerId, String tableType, String date, String time) {
-    
+        // Query to insert booking details data into the database
         String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection connection = Functions.getConnection();
@@ -215,15 +215,15 @@ public class Bookings {
     }
 
     /**
-     * Retrieves the customer ID based on first name and last name.
+     * Retrieves the customer ID based on first name and last name
      * 
-     * @param firstName The first name of the customer.
-     * @param lastName  The last name of the customer.
+     * @param firstName The first name of the customer
+     * @param lastName  The last name of the customer
      * @return The customer ID.
      */
     private static int getCustomerId(String firstName, String lastName) {
         int customerId = 0; 
-                
+        // query to select customer details from the database       
         String query = "SELECT customer_id FROM customers WHERE first_name = ? AND last_name = ?";
         
         try (Connection connection = Functions.getConnection();
@@ -247,7 +247,7 @@ public class Bookings {
     }
 
     /**
-     * Displays a success message after booking a table.
+     * Displays a success message after the table booking is done.
      */
     private void showBookingSuccessMessage() {
         Stage messageStage = new Stage();
@@ -269,20 +269,21 @@ public class Bookings {
     }
 
     /**
-     * Displays a popup showing the bookings of the logged-in user.
+     * Displays a popup showing the bookings of the logged-in user
      * 
-     * @param firstName The first name of the logged-in user.
-     * @param lastName  The last name of the logged-in user.
+     * @param firstName The first name of the logged-in user
+     * @param lastName  The last name of the logged-in user
      */
     @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showBookingPopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("My Bookings");
-    
+        
         TableView<Reservation> tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    
+        
+        // Defining columns for the Bookings TableView
         TableColumn<Reservation, Integer> slNoColumn = new TableColumn<>("Sl. No.");
         slNoColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12; -fx-alignment: CENTER;");
         slNoColumn.setCellValueFactory(new PropertyValueFactory<>("slNo"));
@@ -303,7 +304,7 @@ public class Bookings {
         TableColumn<Reservation, Boolean> bookingStatusColumn = new TableColumn<>("Status");
         bookingStatusColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 12;");
         bookingStatusColumn.setCellValueFactory(new PropertyValueFactory<>("bookingStatus"));
-    
+        // Adding columns to the TableView
         tableView.getColumns().addAll(slNoColumn, bookingDateColumn, bookingTimeColumn, tableTypeColumn, bookingStatusColumn);
     
         ObservableList<Reservation> bookingList = FXCollections.observableArrayList();
@@ -331,7 +332,7 @@ public class Bookings {
         
         bookingList.sort(Comparator.comparing(Reservation::getBookingDate));
         tableView.setItems(bookingList);
-    
+        // Setting up the Stage and Scene
         VBox popupRoot = new VBox(10);
         popupRoot.setAlignment(Pos.CENTER);
         popupRoot.setPadding(new Insets(20));
@@ -343,17 +344,18 @@ public class Bookings {
     }
 
     /**
-     * Displays a popup showing the orders of the logged-in user.
+     * Displays a popup showing the orders of the logged-in user
      * 
-     * @param firstName The first name of the logged-in user.
-     * @param lastName  The last name of the logged-in user.
+     * @param firstName The first name of the logged-in user
+     * @param lastName  The last name of the logged-in user
      */
     @SuppressWarnings({ "deprecation", "unchecked" })
     public static void showOrderPopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("My Orders");
-    
+
+        // Creating a TableView for Orders
         TableView<Order> tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     
@@ -389,12 +391,15 @@ public class Bookings {
                 }
             }
         });
-        
+
+        // Adding columns to the TableView
         tableView.getColumns().addAll(orderIdColumn, orderStatusColumn, actionColumn);
-    
+
+        // Creating an ObservableList for Orders
         ObservableList<Order> orders = FXCollections.observableArrayList();
         int customerId = getCustomerId(firstName, lastName);
-    
+
+        // Fetching order data from database
         String query = "SELECT orderNumber, orderStatus, itemName, itemPrice FROM orders WHERE customer_id = ?";
         try (Connection connection = Functions.getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -418,9 +423,11 @@ public class Bookings {
         ex.printStackTrace();
         System.err.println("Error: Failed to fetch order details - " + ex.getMessage());
     }
-    
+
+        // Setting the ObservableList to the TableView
         tableView.setItems(orders);
-    
+
+        // Setting up the Stage and Scene
         VBox popupRoot = new VBox(10);
         popupRoot.setAlignment(Pos.CENTER);
         popupRoot.setPadding(new Insets(20));
@@ -432,9 +439,9 @@ public class Bookings {
     }
     
     /**
-     * Displays a popup showing the items of a specific order.
+     * Displays a popup showing the items of a specific order
      * 
-     * @param order The order for which to display items.
+     * @param order The details of the order placed by the customer
      */
     @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showOrderItemsPopup(Order order) {
