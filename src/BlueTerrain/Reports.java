@@ -81,7 +81,6 @@ public class Reports {
                 List<String> rowData = new ArrayList<>();
                 rowData.add(String.valueOf(slNo++)); // Adding serial number
                 rowData.add(resultSet.getString("itemName")); 
-                // Placeholder for table allocation data (initially empty)
                 rowData.add("");
                 itemList.add(rowData);
             }
