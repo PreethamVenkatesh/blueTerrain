@@ -48,7 +48,7 @@ public class CustomerOrder {
      * @param loginType    The type of login (e.g., customer, staff)
      * @param profileType  The type of profile (e.g., manager,waiter,chef,delivery driver)
      */
-    public static void showOrder(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
+    public static void showOrder(Stage primaryStage, String firstName, String lastName, String loginType, String profileType, String orderType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
     
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
@@ -75,19 +75,20 @@ public class CustomerOrder {
     
         Button closeButton = new Button("Close");
         closeButton.setAlignment(Pos.BOTTOM_RIGHT);
-        closeButton.setOnAction(e -> {
-            
+        closeButton.setOnAction(e -> {  
             if (loginType.equals("Customer")) {
                 Bookings bookings = new Bookings();
-                bookings.start(primaryStage, firstName, lastName, loginType, profileType);
-            } else {
+                bookings.start(primaryStage,firstName,lastName, loginType, profileType);
+            } else if (loginType.equals("Staff")) {
                 Restaurant restaurant = new Restaurant();
                 restaurant.start(primaryStage, firstName, lastName, profileType, loginType);
+            } else {
+                System.out.println("Please contact system administrator");
             }
         });
     
         Button viewCartButton = new Button("View My Cart");
-        viewCartButton.setOnAction(e -> viewCart(firstName, lastName)); // Pass firstName and lastName to viewCart
+        viewCartButton.setOnAction(e -> viewCart(firstName, lastName, orderType, loginType));
     
         root.getChildren().addAll(Functions.welcomePane(), buttonsBox, viewCartButton, closeButton);
         Functions.setupAndShowScene(primaryStage, root);
@@ -186,7 +187,7 @@ public class CustomerOrder {
      * @param lastName  The last name of the customer
      */
     @SuppressWarnings({"deprecation", "unchecked" })
-    private static void viewCart(String firstName, String lastName) {
+    private static void viewCart(String firstName, String lastName, String orderType, String loginType) {
         Stage cartStage = new Stage();
         cartStage.initModality(Modality.APPLICATION_MODAL);
         cartStage.setTitle("My Cart");
@@ -210,7 +211,7 @@ public class CustomerOrder {
         Button confirmOrderButton = new Button("Confirm Order");
         confirmOrderButton.setOnAction(e -> {
             try {
-                confirmOrder(selectedItems, firstName, lastName, cartStage);
+                confirmOrder(selectedItems, firstName, lastName, cartStage, orderType, loginType);
             } catch (SQLException e1) {
                 e1.printStackTrace();
             }
@@ -269,10 +270,25 @@ public class CustomerOrder {
      * @param cartStage  The stage displaying the cart
      * @throws SQLException if there is an error with database operations
      */
-    private static void confirmOrder(ObservableList<Item> itemList, String firstName, String lastName, Stage cartStage) throws SQLException {
-        int customerId = getCustomerId(firstName, lastName);
-        String queryInsertOrder = "INSERT INTO orders (customer_id, OrderNumber, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?, ?)";
-    
+    private static void confirmOrder(ObservableList<Item> itemList, String firstName, String lastName, Stage cartStage, String orderType, String loginType) throws SQLException {
+        int customerId = 0;
+        try (Connection connection = Functions.getConnection()) {
+            if (loginType.equals("Customer")) {
+                // Set customerId based on customer's first and last name
+                customerId = getCustomerId(firstName, lastName);
+            } else if (loginType.equals("Staff")) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement("SELECT customerId FROM bookings LIMIT 1")) {
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    if (resultSet.next()) {
+                        customerId = resultSet.getInt("customerId");
+                    } else {
+                        System.out.println("No records found in the bookings table.");
+                    }
+                }
+            }
+        }    
+        
+        String queryInsertOrder = "INSERT INTO orders (customer_id, OrderNumber, itemName, itemPrice, orderStatus, orderType) VALUES (?, ?, ?, ?, ?, ?)";    
         int orderNumber = generateUniqueOrderNumber();
     
         try (Connection connection = Functions.getConnection();
@@ -284,6 +300,7 @@ public class CustomerOrder {
                 preparedStatementInsertOrder.setString(3, item.getItemName());
                 preparedStatementInsertOrder.setDouble(4, item.getItemPrice());
                 preparedStatementInsertOrder.setString(5, "Pending");
+                preparedStatementInsertOrder.setString(6, orderType);
                 preparedStatementInsertOrder.executeUpdate();
             }
     
@@ -304,7 +321,7 @@ public class CustomerOrder {
         Button closeConfirmationButton = new Button("Close Confirmation");
         closeConfirmationButton.setOnAction(event -> {
             confirmationStage.close();  // Close the confirmation stage
-            cartStage.close();          // Close the cart stage
+            cartStage.close();       // Close the cart stage
         });
     
         confirmationRoot.getChildren().addAll(new Label("Order created successfully with Order Number: " + orderNumber), closeConfirmationButton);

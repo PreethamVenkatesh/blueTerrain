@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,7 +36,7 @@ import javafx.stage.Stage;
  */
 public class Management {
     private static String BOOKINGID_QUERY = "SELECT bookingId, tableType, tableAllocation FROM bookings";
-    private static String BOOKINGSTATUS_QUERY = "SELECT bookingId FROM bookings";
+    private static String BOOKINGSTATUS_QUERY = "SELECT bookingId FROM bookings WHERE `isApproved` = FALSE";
     
     /**
      * Displays the management popup window.
@@ -135,12 +134,12 @@ public class Management {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle(title);
-
+    
         TableView<List<String>> tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-
+    
         ObservableList<List<String>> itemList = FXCollections.observableArrayList();
-
+    
         try (Connection connection = Functions.getConnection();
                 PreparedStatement preparedStatement = connection.prepareStatement(BOOKINGID_QUERY);
                 ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -150,43 +149,53 @@ public class Management {
                 rowData.add(String.valueOf(slNo++)); // Adding serial number
                 rowData.add(resultSet.getString("bookingId")); // Fetching booking ID
                 rowData.add(resultSet.getString("tableType"));
-                // Placeholder for table allocation data (initially empty)
-                rowData.add("");
+                rowData.add(resultSet.getString("tableAllocation")); // Allocated Table
                 itemList.add(rowData);
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
             System.err.println("Error: Failed to fetch data - " + ex.getMessage());
         }
-
+    
         for (int i = 0; i < columnTitles.length; i++) {
             final int index = i;
             TableColumn<List<String>, String> column = new TableColumn<>(columnTitles[i]);
             column.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
-
+    
             if (i == 3) { 
                 column.setCellFactory(tc -> new ComboBoxCell());
             } else {
                 column.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().get(index)));
             }
-
+    
             tableView.getColumns().add(column);
         }
-
+    
+        // Add Allocated Table column
+        TableColumn<List<String>, String> allocatedTableColumn = new TableColumn<>("Allocated Table");
+        allocatedTableColumn.setCellValueFactory(data -> {
+            String value = data.getValue().get(3); // Get the value from the fourth column (tableAllocation)
+            // If the value is not null or empty, return it; otherwise, return "Not Allocated"
+            return new SimpleStringProperty(value != null && !value.isEmpty() ? value : "Not Allocated");
+        });
+        allocatedTableColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+        tableView.getColumns().add(allocatedTableColumn);
+    
         tableView.setItems(itemList);
-
+    
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> popupStage.close());
-
+    
         VBox popupRoot = new VBox(10);
         popupRoot.setAlignment(Pos.CENTER);
         popupRoot.setPadding(new Insets(20));
         popupRoot.getChildren().addAll(tableView, closeButton);
-
+    
         Scene popupScene = new Scene(popupRoot, 800, 400);
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
+    
 
     // Custom cell factory for ComboBoxCell
     private static class ComboBoxCell extends TableCell<List<String>, String> {
@@ -206,17 +215,12 @@ public class Management {
         @Override
         protected void updateItem(String item, boolean empty) {
             super.updateItem(item, empty);
+            super.updateItem(item, empty);
             if (empty) {
                 setGraphic(null);
             } else {
-                if (disabledCells.contains(getIndex())) {
-                    // If the cell is disabled, show a label with the selected table
-                    Label label = new Label(item);
-                    setGraphic(label);
-                } else {
-                    comboBox.setValue(item);
-                    setGraphic(comboBox);
-                }
+                comboBox.setValue(item);
+                setGraphic(comboBox);
             }
         }
     
@@ -232,10 +236,7 @@ public class Management {
         @Override
         public void commitEdit(String newValue) {
             super.commitEdit(newValue);
-            comboBox.setDisable(true); // Disable the ComboBox after selection
-            disabledCells.add(getIndex()); // Add the index to the set of disabled cells
-            
-            // Update the database here with the new value
+        // Update the database here with the new value
             List<String> rowData = getTableView().getItems().get(getIndex());
             String bookingId = rowData.get(1); 
             updateTableAllocation(bookingId, newValue);

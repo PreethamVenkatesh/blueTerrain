@@ -15,6 +15,7 @@ public class Order {
     private String itemName;
     private double itemPrice;
     private String orderStatus;
+    private String orderType;
 
     /**
      * Constructs an Order object with the specified details.
@@ -24,17 +25,19 @@ public class Order {
      * @param itemName    The name of the item in the order.
      * @param itemPrice   The price of the item in the order.
      */
-    public Order(int orderId, String orderStatus, String itemName, double itemPrice) {
+    public Order(int orderId, String orderStatus, String orderType, String itemName, double itemPrice) {
         this.orderId = orderId;
         this.itemName = itemName;
         this.itemPrice = itemPrice;
         this.orderStatus = orderStatus;
+        this.orderType = orderType;
     }
 
     public int getOrderId() { return orderId; }
     public String getItemName() { return itemName; }
     public double getItemPrice() { return itemPrice; }
     public String getOrderStatus() { return orderStatus; }
+    public String getOrderType() { return orderType; }
 
      /**
      * Displays the order details for a specific customer.

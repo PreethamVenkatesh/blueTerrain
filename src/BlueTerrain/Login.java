@@ -93,8 +93,7 @@ private StackPane loginPane;
                 if (loginType.equals(STAFF)) { 
                     Restaurant restaurant = new Restaurant();
                     restaurant.start(primaryStage, firstName, lastName, profileType, loginType);
-                } else if (loginType.equals(CUSTOMER))
-                 {
+                } else if (loginType.equals(CUSTOMER)) {
                     Bookings bookings = new Bookings();
                     bookings.start(primaryStage,firstName,lastName, loginType, profileType);
                 } else {
