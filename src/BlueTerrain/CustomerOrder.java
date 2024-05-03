@@ -27,6 +27,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * The CustomerOrder class manages the customer's order functionality,
+ * including displaying menu, selecting items, viewing the cart, and confirming orders
+ * @author Aravind Sivakumar, Clinton Ekhameye
+ */
 public class CustomerOrder {
 
     @SuppressWarnings("unused")
@@ -34,6 +39,15 @@ public class CustomerOrder {
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
     private static ObservableList<Item> selectedItems = FXCollections.observableArrayList();
 
+    /**
+     * Displays the customer's order interface
+     * 
+     * @param primaryStage The primary stage of the JavaFX application
+     * @param firstName    The first name of the customer
+     * @param lastName     The last name of the customer
+     * @param loginType    The type of login (e.g., customer, staff)
+     * @param profileType  The type of profile (e.g., manager,waiter,chef,delivery driver)
+     */
     public static void showOrder(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
     
@@ -78,8 +92,14 @@ public class CustomerOrder {
         root.getChildren().addAll(Functions.welcomePane(), buttonsBox, viewCartButton, closeButton);
         Functions.setupAndShowScene(primaryStage, root);
     }
-    
-
+   
+     /**
+     * Displays a popup window showing the menu items for a specific itemType
+     * 
+     * @param itemType   The type of menu items to display
+     * @param firstName  The first name of the customer
+     * @param lastName   The last name of the customer
+     */
     @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showMenuItemPopup(String itemType, String firstName, String lastName) {
         Stage popupStage = new Stage();
@@ -142,16 +162,29 @@ public class CustomerOrder {
         popupStage.showAndWait();
     }
 
+     /**
+     * Displays a popup window showing the menu items for a specific item type
+     * 
+     * @param itemType   The type of menu items to display
+     * @param firstName  The first name of the customer
+     * @param lastName   The last name of the customer
+     */
     private static void addToCart(ObservableList<Item> itemList) {
         System.out.println("Adding selected items to cart...");
         for (Item item : itemList) {
-            if (item.isSelected() && !selectedItems.contains(item)) {  // Avoid duplicate entries
+            if (item.isSelected() && !selectedItems.contains(item)) { 
                 selectedItems.add(item);
                 System.out.println("Added: " + item.getItemName());
             }
         }
     }
     
+    /**
+     * Displays the customer's cart with selected items
+     * 
+     * @param firstName The first name of the customer
+     * @param lastName  The last name of the customer
+     */
     @SuppressWarnings({"deprecation", "unchecked" })
     private static void viewCart(String firstName, String lastName) {
         Stage cartStage = new Stage();
@@ -179,7 +212,6 @@ public class CustomerOrder {
             try {
                 confirmOrder(selectedItems, firstName, lastName, cartStage);
             } catch (SQLException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
         });
@@ -194,6 +226,9 @@ public class CustomerOrder {
         cartStage.showAndWait();
     }
     
+     /**
+     * TableCell implementation for the "Select" button in the menu item table
+     */
     private static class ButtonCell extends TableCell<Item, Void> {
         private final Button selectButton = new Button("Select");
     
@@ -225,6 +260,15 @@ public class CustomerOrder {
         }
     }
     
+    /**
+     * Confirms the customer's order and updates the database
+     * 
+     * @param itemList   The list of items in the customer's cart
+     * @param firstName  The first name of the customer
+     * @param lastName   The last name of the customer
+     * @param cartStage  The stage displaying the cart
+     * @throws SQLException if there is an error with database operations
+     */
     private static void confirmOrder(ObservableList<Item> itemList, String firstName, String lastName, Stage cartStage) throws SQLException {
         int customerId = getCustomerId(firstName, lastName);
         String queryInsertOrder = "INSERT INTO orders (customer_id, OrderNumber, itemName, itemPrice, orderStatus) VALUES (?, ?, ?, ?, ?)";
@@ -271,6 +315,11 @@ public class CustomerOrder {
         confirmationStage.showAndWait();
     }
      
+    /**
+     * Generates a unique order number based on timestamp
+     * 
+     * @return The generated unique order number
+     */
     private static int generateUniqueOrderNumber() {
         long timestamp = System.currentTimeMillis();
         Random random = new Random();
@@ -280,6 +329,13 @@ public class CustomerOrder {
         return orderNumber;
     }
 
+    /**
+     * Retrieves the customer ID from the database based on first name and last name
+     * 
+     * @param firstName  The first name of the customer
+     * @param lastName   The last name of the customer
+     * @return The customer ID
+     */
     private static int getCustomerId(String firstName, String lastName) {
         int customerId = 0; 
                 

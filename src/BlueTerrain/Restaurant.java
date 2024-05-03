@@ -12,8 +12,27 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * The Restaurant class represents the main functionality of the restaurant application.
+ * It includes methods to start the application, display the main interface, and handle user interactions.
+ * 
+ * <p>This class contains functionality related to displaying the main menu, user details, and various options based on the user's profile type.</p>
+ * 
+ * <p>It also initializes and handles actions for buttons such as bookings, menu, staff management, orders, reports, and more.</p>
+ * 
+ * @author Preetham Venkatesh
+ */
 public class Restaurant {
 
+    /**
+     * Starts the restaurant application.
+     * 
+     * @param primaryStage The primary stage of the JavaFX application.
+     * @param firstName    The first name of the logged-in user.
+     * @param lastName     The last name of the logged-in user.
+     * @param profileType  The profile type of the logged-in user (e.g., Manager, Waiter, Chef).
+     * @param loginType    The login type of the user (e.g., Staff, Customer).
+     */
     public void start(Stage primaryStage, String firstName, String lastName, String profileType, String loginType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
@@ -34,7 +53,7 @@ public class Restaurant {
         userDetailsBox.setAlignment(Pos.TOP_LEFT);
 
         Label openingHoursLabel = Functions.openingHours();
-
+        // Creates VBox layouts for various menu buttons with different colors.
         VBox bookingBox = Functions.createButtonVBox(Color.YELLOW, "BOOKINGS");
         VBox managementBox = Functions.createButtonVBox(Color.YELLOW, "MANAGEMENT");
         VBox menuBox = Functions.createButtonVBox(Color.ORANGE, "MENU");
@@ -43,6 +62,7 @@ public class Restaurant {
         VBox reportsBox = Functions.createButtonVBox(Color.GREENYELLOW, "REPORTS");
         VBox chefSpecialBox = Functions.createButtonVBox(Color.GREENYELLOW, "CHEF SPECIAL");
 
+        // Determines which buttons to add based on the user's profile type.
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
         if (profileType.equals("Manager")) {
@@ -59,7 +79,8 @@ public class Restaurant {
 
         root.getChildren().addAll(Functions.welcomePane(), userDetailsBox, openingHoursLabel, buttonsBox, Functions.logOut(primaryStage));
         Functions.setupAndShowScene(primaryStage, root);
-
+        
+        // Sets action events for various menu buttons.
         Button menuButton = (Button) menuBox.getChildren().get(0); 
         menuButton.setOnAction(e -> Menu.showMenu(primaryStage));
 
@@ -78,6 +99,7 @@ public class Restaurant {
         Button ordersButton = (Button) ordersBox.getChildren().get(0);
         ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
 
+        // Sets the user's details for the menu.
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
         Menu.setProfileType(profileType);

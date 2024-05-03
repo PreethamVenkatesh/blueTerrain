@@ -15,13 +15,24 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * The ChefSpecial class provides functionality to manage details of the chef special dishes
+ * It allows Chef to add chef special dishes and their respective prices 
+ * @author Manasa Ramesh
+ */
 public class ChefSpecial {
+    /**
+     * Displays a popup window for adding a new chef special dish
+     * 
+     * @param primaryStage The primary stage of the JavaFX application
+     */
     public static void showChefSpecialPopup(Stage primaryStage) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
 
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
+        //Text specifying what details to be given in the field and a field to add the same
         HBox loginTypeBox = new HBox(10);
         loginTypeBox.setAlignment(Pos.TOP_CENTER);
         HBox specialDishField = Functions.createLabeledField("\tChef Special", "Enter Chef Special");
@@ -61,6 +72,12 @@ public class ChefSpecial {
         Functions.setupAndShowScene(primaryStage, root);
     }
 
+    /**
+     * Inserts a new chef special dish and its price into the database
+     * 
+     * @param itemName        The name of the chef special dish
+     * @param specialItemPrice  The price of the chef special dish
+     */
     private static void insertIntoChefSpecial(String itemName, double specialItemPrice) {
         try (Connection connection = Functions.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(
@@ -77,6 +94,11 @@ public class ChefSpecial {
         }
     }
 
+    /**
+     * Displays a popup message with the provided message
+     * 
+     * @param message The message to be displayed in the popup
+     */
     public static void displayPopup(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText(null);

@@ -22,16 +22,36 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * The Reports class provides functionality to display various reports.
+ * These reports include information such as the most popular item, busiest period, 
+ * most active customer, and highest hours worked by staff.
+ * 
+ * <p>This class contains methods to show each report in a popup window.</p>
+ * 
+ * @author Manasa Ramesh
+ */
 public class Reports {
+
+    //SQL query to retrieve the most popular item.
     private static String MOST_POPULAR_ITEM_QUERY = "SELECT itemName FROM orders GROUP BY itemName ORDER BY COUNT(*) DESC LIMIT 1";
+    //SQL query to retrieve the busiest period.
     private static String BUSIEST_PERIOD = "SELECT date, time FROM bookings GROUP BY date, time ORDER BY COUNT(*) DESC LIMIT 1";
+    //SQL query to retrieve the most active customer.
     private static String MOST_ACTIVE_CUSTOMER = "SELECT CONCAT(first_name,' ',last_name) AS Customer_Name FROM customers GROUP BY first_name, last_name ORDER BY COUNT(*) DESC LIMIT 1";
+    //SQL query to retrieve the staff with the highest hours worked.
     private static String HIGHEST_WORKED_STAFF = "SELECT CONCAT(first_name, ' ', last_name) AS Staff_Name, totalHoursWorked  FROM staffs ORDER BY totalHoursWorked DESC LIMIT 1";
 
-
+    /**
+     * Displays a popup window with various reports.
+     * 
+     * @param primaryStage The primary stage of the application.
+     */
     public static void showReportsPopup(Stage primaryStage) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
-
+     /* buttons created with display colour and Text to display on the buttons to generate reports 
+        for Most popular item, Busiest Period, Most Active Customer and Highest Hours worked by Staff
+     */
         Button mostPopularItemButton = Functions.createButtonMenu("Most \nPopular \nItem", Color.LAVENDER);
         Button busiestPeriodButton = Functions.createButtonMenu("Busiest \nPeriod", Color.LAVENDER);
         Button mostActiveCustomerButton = Functions.createButtonMenu("Most \nActive \nCustomer", Color.LAVENDER);
@@ -62,6 +82,12 @@ public class Reports {
 
     }
 
+    /**
+     * Displays a popup window with the most popular item report.
+     * 
+     * @param title        The title of the popup window.
+     * @param columnTitles The titles of the columns in the table.
+     */
     @SuppressWarnings({ "deprecation"})
     private static void showPopup(String title, String[] columnTitles) {
         Stage popupStage = new Stage();
@@ -113,6 +139,12 @@ public class Reports {
         
     }
     
+    /**
+     * Displays a popup window with the busiest period report.
+     * 
+     * @param title        The title of the popup window.
+     * @param columnTitles The titles of the columns in the table.
+     */
     @SuppressWarnings({ "deprecation" })
     private static void showPopup1(String title, String[] columnTitles) {
         Stage popupStage = new Stage();
@@ -166,6 +198,12 @@ public class Reports {
         
     }
 
+    /**
+     * Displays a popup window with the most active customer report.
+     * 
+     * @param title        The title of the popup window.
+     * @param columnTitles The titles of the columns in the table.
+     */
     @SuppressWarnings({ "deprecation" })
     private static void showPopup2(String title, String[] columnTitles) {
         Stage popupStage = new Stage();
@@ -218,6 +256,12 @@ public class Reports {
         
     }
 
+    /**
+     * Displays a popup window with the highest hours worked by staff report.
+     * 
+     * @param title        The title of the popup window.
+     * @param columnTitles The titles of the columns in the table.
+     */
     @SuppressWarnings({ "deprecation" })
     private static void showPopup3(String title, String[] columnTitles) {
         Stage popupStage = new Stage();
