@@ -36,12 +36,31 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+
+/**
+ * The Bookings class represents functionality related to managing restaurant bookings
+ * It provides methods for booking a table, displaying bookings, and displaying orders
+ * @author Aravind Sivakumar, Clinton Ekhameye, Preetham Venkatesh
+ */
 public class Bookings {
 
+    /**
+     * The SQL query to retrieve bookings for a specific customer
+     */
     private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
+
     private static String COUNTERPICKUP = "Counter Pickup";
     private static String DELIVERY = "Delivery";
 
+    /**
+     * Starts the booking interface.
+     * 
+     * @param primaryStage The primary stage of the JavaFX application
+     * @param firstName     The first name of the logged-in user
+     * @param lastName      The last name of the logged-in user
+     * @param loginType     The type of login (e.g., customer, staff)
+     * @param profileType   The profile type of the user (e.g., chef, waiter, manager, delivery driver)
+     */
     public void start(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Bookings.jpeg");
         Label openingHoursLabel = Functions.openingHours();
@@ -94,6 +113,12 @@ public class Bookings {
 
     }
 
+    /**
+     * Displays a popup for booking a table.
+     * 
+     * @param firstName The first name of the logged-in user.
+     * @param lastName  The last name of the logged-in user.
+     */
     private void bookTablePopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -166,6 +191,14 @@ public class Bookings {
         popupStage.showAndWait();
     }
 
+    /**
+     * Inserts a booking into the database
+     * 
+     * @param customerId The ID of the customer making the booking
+     * @param tableType  The type of table being booked
+     * @param date       The date of the booking
+     * @param time       The time of the booking
+     */
     private void insertBooking(int customerId, String tableType, String date, String time) {
     
         String query = "INSERT INTO bookings (customerId, tableType, date, time, isApproved) VALUES (?, ?, ?, ?, ?)";
@@ -189,6 +222,13 @@ public class Bookings {
         }
     }
 
+    /**
+     * Retrieves the customer ID based on first name and last name
+     * 
+     * @param firstName The first name of the customer
+     * @param lastName  The last name of the customer
+     * @return The customer ID.
+     */
     private static int getCustomerId(String firstName, String lastName) {
         int customerId = 0; 
                 
@@ -214,6 +254,9 @@ public class Bookings {
         return customerId;
     }
 
+    /**
+     * Displays a success message after the table booking is done.
+     */
     private void showBookingSuccessMessage() {
         Stage messageStage = new Stage();
         messageStage.initModality(Modality.APPLICATION_MODAL);
@@ -231,8 +274,14 @@ public class Bookings {
     
         messageStage.setScene(messageScene);
         messageStage.show();
-    }
+    }   
 
+    /**
+     * Displays a popup showing the bookings of the logged-in user
+     * 
+     * @param firstName The first name of the logged-in user
+     * @param lastName  The last name of the logged-in user
+     */
     @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showBookingPopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
@@ -301,6 +350,12 @@ public class Bookings {
         popupStage.showAndWait();
     }
 
+    /**
+     * Displays a popup showing the orders of the logged-in user
+     * 
+     * @param firstName The first name of the logged-in user
+     * @param lastName  The last name of the logged-in user
+     */
     @SuppressWarnings({ "deprecation", "unchecked" })
     public static void showOrderPopup(String firstName, String lastName) {
         Stage popupStage = new Stage();
@@ -389,15 +444,17 @@ public class Bookings {
         popupStage.showAndWait();
     }
     
-    
+    /**
+     * Displays a popup showing the items of a specific order
+     * 
+     * @param order The details of the order placed by the customer
+     */
     @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showOrderItemsPopup(Order order) {
-        // Create a new stage for showing order items
         Stage itemsPopupStage = new Stage();
         itemsPopupStage.initModality(Modality.APPLICATION_MODAL);
         itemsPopupStage.setTitle("Order Items");
     
-        // Create TableView for displaying order items
         TableView<Item> tableView = new TableView<>();
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     
@@ -407,10 +464,8 @@ public class Bookings {
         TableColumn<Item, Double> itemPriceColumn = new TableColumn<>("Item Price");
         itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("itemPrice"));
     
-        // Add columns to TableView
         tableView.getColumns().addAll(itemNameColumn, itemPriceColumn);
     
-        // Populate TableView with order items
         ObservableList<Item> orderItems = FXCollections.observableArrayList();
     
         String query = "SELECT itemName, itemPrice FROM orders WHERE orderNumber = ?";
@@ -432,20 +487,14 @@ public class Bookings {
     
         tableView.setItems(orderItems);
     
-        // Create VBox to hold TableView
         VBox popupRoot = new VBox(10);
         popupRoot.setAlignment(Pos.CENTER);
         popupRoot.setPadding(new Insets(20));
         popupRoot.getChildren().addAll(tableView);
     
-        // Create Scene
         Scene popupScene = new Scene(popupRoot, 400, 300);
     
-        // Set Scene and show stage
         itemsPopupStage.setScene(popupScene);
         itemsPopupStage.showAndWait();
     }
-    
-    
-    
 }
