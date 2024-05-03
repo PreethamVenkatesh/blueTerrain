@@ -60,7 +60,7 @@ public class Menu {
         return loginType;
     }
 
-    public static void showMenu(Stage primaryStage) {
+    public static void showMenu(Stage primaryStage, String loginType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);

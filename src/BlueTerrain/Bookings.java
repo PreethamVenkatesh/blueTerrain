@@ -39,6 +39,8 @@ import javafx.stage.Stage;
 public class Bookings {
 
     private static String BOOKING_QUERY = "SELECT * FROM bookings WHERE customerId = ?";
+    private static String COUNTERPICKUP = "Counter Pickup";
+    private static String DELIVERY = "Delivery";
 
     public void start(Stage primaryStage, String firstName, String lastName, String loginType, String profileType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Bookings.jpeg");
@@ -60,10 +62,11 @@ public class Bookings {
         
         VBox leftBox = Functions.createButtonVBox(Color.LAVENDER, "BOOK TABLE");
         VBox centreBox = Functions.createButtonVBox(Color.LAVENDER, "TAKE AWAY");
+        VBox rightBox = Functions.createButtonVBox(Color.LAVENDER, "DELIVERY");
 
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(leftBox, centreBox);
+        buttonsBox.getChildren().addAll(leftBox, centreBox, rightBox);
 
         Hyperlink myBookings = new Hyperlink("My Bookings");
         myBookings.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20; -fx-background-color: #2E5CB8; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
@@ -84,7 +87,10 @@ public class Bookings {
         bookTableButton.setOnAction(e -> bookTablePopup(firstName, lastName));
 
         Button orderNowButton = (Button) centreBox.getChildren().get(0);
-        orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
+        orderNowButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType, COUNTERPICKUP));
+
+        Button deliveryButton = (Button) rightBox.getChildren().get(0);
+        deliveryButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType, DELIVERY));
 
     }
 
@@ -311,6 +317,10 @@ public class Bookings {
         TableColumn<Order, String> orderStatusColumn = new TableColumn<>("Order Status");
         orderStatusColumn.setCellValueFactory(new PropertyValueFactory<>("orderStatus"));
         orderStatusColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
+
+        TableColumn<Order, String> orderTypeColumn = new TableColumn<>("Order Type");
+        orderTypeColumn.setCellValueFactory(new PropertyValueFactory<>("orderType"));
+        orderTypeColumn.setStyle("-fx-font-weight: bold; -fx-font-size: 14; -fx-alignment: CENTER;");
     
         TableColumn<Order, Void> actionColumn = new TableColumn<>("Actions");
         actionColumn.setSortable(false);
@@ -337,12 +347,12 @@ public class Bookings {
             }
         });
         
-        tableView.getColumns().addAll(orderIdColumn, orderStatusColumn, actionColumn);
+        tableView.getColumns().addAll(orderIdColumn, orderStatusColumn, orderTypeColumn, actionColumn);
     
         ObservableList<Order> orders = FXCollections.observableArrayList();
         int customerId = getCustomerId(firstName, lastName);
     
-        String query = "SELECT orderNumber, orderStatus, itemName, itemPrice FROM orders WHERE customer_id = ?";
+        String query = "SELECT orderNumber, orderStatus, orderType, itemName, itemPrice FROM orders WHERE customer_id = ?";
         try (Connection connection = Functions.getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(query)) {
         preparedStatement.setInt(1, customerId); // Set the customer ID parameter
@@ -355,6 +365,7 @@ public class Bookings {
                     orders.add(new Order(
                             orderNumber,
                             resultSet.getString("orderStatus"),
+                            resultSet.getString("orderType"),
                             resultSet.getString("itemName"),
                             resultSet.getDouble("itemPrice")
                     ));

@@ -14,6 +14,8 @@ import javafx.stage.Stage;
 
 public class Restaurant {
 
+    private static String DINEIN = "Dine In";
+
     public void start(Stage primaryStage, String firstName, String lastName, String profileType, String loginType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
 
@@ -40,8 +42,10 @@ public class Restaurant {
         VBox menuBox = Functions.createButtonVBox(Color.ORANGE, "MENU");
         VBox staffsBox = Functions.createButtonVBox(Color.ORANGE, "STAFFS");
         VBox ordersBox = Functions.createButtonVBox(Color.GREENYELLOW, "ORDERS");
+        VBox chefOrdersBox = Functions.createButtonVBox(Color.GREENYELLOW, " COOK ORDERS");
         VBox reportsBox = Functions.createButtonVBox(Color.GREENYELLOW, "REPORTS");
         VBox chefSpecialBox = Functions.createButtonVBox(Color.GREENYELLOW, "CHEF SPECIAL");
+        VBox deliveryBox = Functions.createButtonVBox(Color.GREENYELLOW, "DELIVERIES");
 
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
@@ -50,18 +54,18 @@ public class Restaurant {
         } else if (profileType.equals("Waiter")) {
             buttonsBox.getChildren().addAll(managementBox, menuBox, ordersBox);
         } else if (profileType.equals("Chef")) {
-            buttonsBox.getChildren().addAll(ordersBox, chefSpecialBox);
+            buttonsBox.getChildren().addAll(chefOrdersBox, chefSpecialBox);
         } else if (profileType.equals("Delivery Driver")) {
-            buttonsBox.getChildren().addAll(ordersBox);
+            buttonsBox.getChildren().addAll(deliveryBox);
         } else {
-            buttonsBox.getChildren().addAll(bookingBox, managementBox, menuBox, staffsBox, ordersBox, reportsBox);
+            buttonsBox.getChildren().addAll(bookingBox, managementBox, menuBox, staffsBox, ordersBox, chefOrdersBox, reportsBox);
         }
 
         root.getChildren().addAll(Functions.welcomePane(), userDetailsBox, openingHoursLabel, buttonsBox, Functions.logOut(primaryStage));
         Functions.setupAndShowScene(primaryStage, root);
 
         Button menuButton = (Button) menuBox.getChildren().get(0); 
-        menuButton.setOnAction(e -> Menu.showMenu(primaryStage));
+        menuButton.setOnAction(e -> Menu.showMenu(primaryStage, loginType));
 
         Button staffButton = (Button) staffsBox.getChildren().get(0); 
         staffButton.setOnAction(e -> Staff.showStaffPopup(primaryStage));
@@ -72,11 +76,17 @@ public class Restaurant {
         Button chefSpecialButton = (Button) chefSpecialBox.getChildren().get(0);
         chefSpecialButton.setOnAction(e -> ChefSpecial.showChefSpecialPopup(primaryStage));
 
+        Button chefOrdersButton = (Button) chefOrdersBox.getChildren().get(0);
+        chefOrdersButton.setOnAction(e -> ChefSpecial.chefOrderPopUp());
+
+        Button deliveryButton = (Button) deliveryBox.getChildren().get(0);
+        deliveryButton.setOnAction(e -> ChefSpecial.deliveryPopup());
+
         Button reportsButton = (Button) reportsBox.getChildren().get(0);
         reportsButton.setOnAction(e -> Reports.showReportsPopup(primaryStage));
 
         Button ordersButton = (Button) ordersBox.getChildren().get(0);
-        ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
+        ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType, DINEIN));
 
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
