@@ -98,6 +98,7 @@ public class Staff {
             profileTypeBox.getChildren().addAll(profileTypeLabel, profileTypeChoiceBox);
 
             Button addButton = new Button("Add");
+
             // Retrieving entered values and inserting into database
             addButton.setOnAction(event -> {
                 String firstName = ((TextField) firstNameBox.getChildren().get(1)).getText();
@@ -138,6 +139,7 @@ public class Staff {
             addStaffPopup.setScene(addStaffScene);
             addStaffPopup.showAndWait();
         });
+
          // Creating a hyperlink to delete staff
         Hyperlink deleteStaffLink = new Hyperlink("Delete Staff");
         deleteStaffLink.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
@@ -158,7 +160,7 @@ public class Staff {
      * 
      * @param profileType The profile type of the staff (e.g., "Manager", "Chef", "Waiter", "Delivery Driver").
      */
-        @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showStaffPopup(String profileType) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -254,7 +256,7 @@ public class Staff {
         }
     }
 
-        /**
+    /**
      * Refreshes the TableView displaying staff profiles based on the specified profile type.
      * 
      * @param profileType The profile type of the staff (e.g., "Manager", "Chef", "Waiter", "Delivery Driver").

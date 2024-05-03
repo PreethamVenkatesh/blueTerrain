@@ -41,10 +41,15 @@ public class Signup {
         noteLabel.setFont(new Font(16)); 
         noteLabel.setStyle("-fx-text-fill: yellow;");
 
+        Label noteLabel = new Label("After Signup you will be navigated back to Login page");
+        noteLabel.setFont(new Font(16)); 
+        noteLabel.setStyle("-fx-text-fill: yellow;");
+
         HBox firstNameBox = Functions.createLabeledField("First Name", "Enter your First Name");
         HBox lastNameBox = Functions.createLabeledField("Last Name", "Enter your Last Name");
         HBox addressBox = Functions.createLabeledField("Address     ", "Enter your Address");
         Button signUpButton = Functions.createButton("Sign Up");
+
         // Creates a Hyperlink for navigating back to the login page if the user already has an account.
         Hyperlink loginLink = new Hyperlink("Aleady have an account? Return to Login page");
         loginLink.setFont(new Font(15));

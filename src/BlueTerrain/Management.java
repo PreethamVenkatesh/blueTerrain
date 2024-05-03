@@ -187,9 +187,8 @@ public class Management {
         popupStage.setScene(popupScene);
         popupStage.showAndWait();
     }
-    /**
-     * Custom cell factory for ComboBoxCell.
-     */
+
+    // Custom cell factory for ComboBoxCell
     private static class ComboBoxCell extends TableCell<List<String>, String> {
         private final ComboBox<String> comboBox;
         private static final Set<Integer> disabledCells = new HashSet<>();

@@ -31,6 +31,7 @@ public class ChefSpecial {
         popupStage.initModality(Modality.APPLICATION_MODAL);
 
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
+
         //Text specifying what details to be given in the field and a field to add the same
         HBox loginTypeBox = new HBox(10);
         loginTypeBox.setAlignment(Pos.TOP_CENTER);

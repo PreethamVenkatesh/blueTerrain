@@ -61,6 +61,7 @@ public class Restaurant {
         VBox ordersBox = Functions.createButtonVBox(Color.GREENYELLOW, "ORDERS");
         VBox reportsBox = Functions.createButtonVBox(Color.GREENYELLOW, "REPORTS");
         VBox chefSpecialBox = Functions.createButtonVBox(Color.GREENYELLOW, "CHEF SPECIAL");
+
         // Determines which buttons to add based on the user's profile type.
         HBox buttonsBox = new HBox(50); 
         buttonsBox.setAlignment(Pos.CENTER);
@@ -97,6 +98,7 @@ public class Restaurant {
 
         Button ordersButton = (Button) ordersBox.getChildren().get(0);
         ordersButton.setOnAction(e -> CustomerOrder.showOrder(primaryStage, firstName, lastName, loginType, profileType));
+
         // Sets the user's details for the menu.
         Menu.setFirstName(firstName);
         Menu.setLastName(lastName);
