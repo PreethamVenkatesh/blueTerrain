@@ -21,6 +21,12 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+/**
+ * The Login class manages the login functionality of the application
+ * It provides methods to authenticate users and display the login interface
+ * 
+ * @author Preetham Venkatesh
+ */
 public class Login {
 
 @FXML
@@ -33,16 +39,22 @@ private StackPane loginPane;
     private static String CUSTOMER = "Customer";
     private static String STAFF = "Staff";
 
+    /**
+     * Displays the login interface
+     * 
+     * @param primaryStage The primary stage of the application
+     */
     public void start(Stage primaryStage) {        
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_BackgroundImage.jpg");
 
         HBox loginTypeBox = new HBox(10);
         loginTypeBox.setAlignment(Pos.TOP_CENTER);
-        Label loginTypeLabel = new Label(LOGIN_TYPE);
+        Label loginTypeLabel = new Label(LOGIN_TYPE); // Creates a Label to display the login type
         loginTypeLabel.setFont(new Font(20));
         loginTypeLabel.setStyle("-fx-text-fill: white;");
+        // Creates a ChoiceBox for selecting the login type, with options for customer and staff
         ChoiceBox<String> loginTypeChoiceBox = new 
-                ChoiceBox<>(FXCollections.observableArrayList(CUSTOMER, STAFF));
+                ChoiceBox<>(FXCollections.observableArrayList(CUSTOMER, STAFF)); 
         loginTypeChoiceBox.getSelectionModel().selectFirst();
         loginTypeChoiceBox.setStyle("-fx-text-fill: black;");
         loginTypeBox.getChildren().addAll(loginTypeLabel, loginTypeChoiceBox);
@@ -93,6 +105,13 @@ private StackPane loginPane;
         });
     }
 
+    /**
+     * Authenticates a user based on the provided username and login type.
+     * 
+     * @param username  The username of the user.
+     * @param loginType The type of login (e.g., Customer or Staff).
+     * @return An array containing the user's details if authenticated, or null if authentication fails.
+     */
     private String[] authenticate(String username, String loginType) {
         String tableName = (loginType.equals(CUSTOMER)) ? "customers" : "staffs";
         String query = "SELECT * FROM " + tableName + " WHERE first_name = ?";
@@ -125,4 +144,3 @@ private StackPane loginPane;
     }
 
 }
-

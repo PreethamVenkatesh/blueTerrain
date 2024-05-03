@@ -27,10 +27,22 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * The Management class handles management-related functionalities, such as viewing table information,
+ * managing table allocation, and booking status.
+ * It provides methods to display popup windows for each functionality.
+ * 
+ * @author Manasa Ramesh
+ */
 public class Management {
     private static String BOOKINGID_QUERY = "SELECT bookingId, tableType, tableAllocation FROM bookings";
     private static String BOOKINGSTATUS_QUERY = "SELECT bookingId FROM bookings WHERE `isApproved` = FALSE";
     
+    /**
+     * Displays the management popup window.
+     * 
+     * @param primaryStage The primary stage of the application.
+     */
     public static void showManagementPopup(Stage primaryStage) {
 
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
@@ -63,6 +75,12 @@ public class Management {
         Functions.setupAndShowScene(primaryStage, root);
     }
 
+    /**
+     * Displays a popup window for table information.
+     * 
+     * @param title        The title of the popup window.
+     * @param columnTitles The titles of the columns in the table.
+     */
     @SuppressWarnings({ "deprecation", "unchecked" })
     private static void showPopup(String title, String[] columnTitles) {
         Stage popupStage = new Stage();
@@ -74,13 +92,12 @@ public class Management {
 
         ObservableList<List<String>> itemList = FXCollections.observableArrayList();
 
-        // Sample hardcoded data for the table columns
         List<String> rowData1 = new ArrayList<>(Arrays.asList("\n Table 1", "\n Table 5", "\n Table 9", "\n Table 11"));
         List<String> rowData2 = new ArrayList<>(Arrays.asList("\n Table 2", "\n Table 6", "\n Table 10", "\n"));
         List<String> rowData3 = new ArrayList<>(Arrays.asList("\n Table 3", "\n Table 7", "\n ", "\n ")); 
         List<String> rowData4 = new ArrayList<>(Arrays.asList("\n Table 4", "\n Table 8", "\n ", "\n ")); 
            
-           itemList.addAll(rowData1, rowData2, rowData3, rowData4);
+        itemList.addAll(rowData1, rowData2, rowData3, rowData4);//adding all the row details to the tabelview created
 
         for (int i = 0; i < columnTitles.length; i++) {
             final int index = i;
@@ -106,6 +123,12 @@ public class Management {
         
     }
 
+    /**
+     * Displays a popup window for table allocation.
+     * 
+     * @param title        The title of the popup window.
+     * @param columnTitles The titles of the columns in the table.
+     */
     @SuppressWarnings({ "deprecation" })
     private static void showPopup1(String title, String[] columnTitles) {
         Stage popupStage = new Stage();
@@ -181,7 +204,8 @@ public class Management {
         
         public ComboBoxCell() {
             comboBox = new ComboBox<>();
-            comboBox.getItems().addAll("Table 1", "Table 2", "Table 3", "Table 4", "Table 5", "Table 6", "Table 7", "Table 8", "Table 9", "Table 10", "Table 11");
+            comboBox.getItems().addAll("Table 1", "Table 2", "Table 3", "Table 4", 
+                                       "Table 5", "Table 6", "Table 7", "Table 8", "Table 9", "Table 10", "Table 11");
             comboBox.setOnAction(event -> {
                 String selectedItem = comboBox.getValue();
                 commitEdit(selectedItem);
@@ -214,7 +238,7 @@ public class Management {
             super.commitEdit(newValue);
         // Update the database here with the new value
             List<String> rowData = getTableView().getItems().get(getIndex());
-            String bookingId = rowData.get(1); // Booking ID
+            String bookingId = rowData.get(1); 
             updateTableAllocation(bookingId, newValue);
         }
     
@@ -232,7 +256,12 @@ public class Management {
         }
     }
     
-
+    /**
+     * Displays a popup window for booking status.
+     * 
+     * @param title        The title of the popup window.
+     * @param columnTitles The titles of the columns in the table.
+     */
     @SuppressWarnings({ "deprecation" })
     private static void showPopup2(String title, String[] columnTitles) {
         Stage popupStage = new Stage();
@@ -290,6 +319,9 @@ public class Management {
         popupStage.showAndWait();
     }
 
+    /**
+     * Custom cell factory for ButtonCell.
+     */
     private static class ButtonCell extends TableCell<List<String>, Void> {
         private final Button approveButton = new Button("Approve");
         private boolean clicked = false;

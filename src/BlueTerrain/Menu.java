@@ -20,49 +20,105 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * The Menu class handles the display of menu items based on different categories.
+ * It provides methods to show menu items in popup windows.
+ * 
+ * <p>This class also includes methods to set and get user profile information.</p>
+ * 
+ * @author Preetham Venkatesh
+ */
 public class Menu {
 
+    /**
+     * The SQL query to retrieve menu items based on the item type.
+     */
     private static String MENU_QUERY = "SELECT ItemValue, ItemName FROM Menu WHERE ItemType = ?";
     static String firstName;
     static String lastName;
     static String profileType;
     static String loginType;
 
+    /**
+     * Sets the first name of the logged-in user.
+     * 
+     * @param firstName The first name of the user.
+     */
     public static void setFirstName(String firstName) {
         Menu.firstName = firstName;
     }
 
+    /**
+     * Sets the last name of the logged-in user.
+     * 
+     * @param lastName The last name of the user.
+     */
     public static void setLastName(String lastName) {
         Menu.lastName = lastName;
     }
 
+    /**
+     * Sets the profile type of the logged-in user.
+     * 
+     * @param profileType The profile type of the user.
+     */
     public static void setProfileType(String profileType) {
         Menu.profileType = profileType;
     }
 
+    /**
+     * Sets the login type of the user.
+     * 
+     * @param loginType The login type of the user.
+     */
     public static void setLoginType(String loginType) {
         Menu.profileType = loginType;
     }
 
+    /**
+     * Retrieves the first name of the logged-in user.
+     * 
+     * @return The first name of the user.
+     */
     public static String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Retrieves the last name of the logged-in user.
+     * 
+     * @return The last name of the user.
+     */
     public static String getLastName() {
         return lastName;
     }
 
+    /**
+     * Retrieves the profile type of the logged-in user.
+     * 
+     * @return The profile type of the user.
+     */
     public static String getProfileType() {
         return profileType;
     }
 
+    /**
+     * Retrieves the login type of the user.
+     * 
+     * @return The login type of the user.
+     */
     public static String getLoginType() {
         return loginType;
     }
 
+    /**
+     * Displays the main menu with different food categories.
+     * 
+     * @param primaryStage The primary stage of the application.
+     */
     public static void showMenu(Stage primaryStage, String loginType) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
-
+        //the colour and text details to be displayed on the buttons created in the Menu
         Button startersButton = Functions.createButtonMenu("STARTERS", Color.LAVENDER);
         Button fishMenuButton = Functions.createButtonMenu("FISH MENU", Color.LAVENDER);
         Button grillMeatButton = Functions.createButtonMenu("GRILL & MEAT", Color.LAVENDER);
@@ -91,6 +147,11 @@ public class Menu {
         Functions.setupAndShowScene(primaryStage, root);
     }
 
+    /**
+     * Displays a popup window for a specific category of menu items.
+     * 
+     * @param itemType The type of menu items to display (e.g., Starter, Fish_Menu).
+     */
     @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showMenuItemPopup(String itemType) {
         Stage popupStage = new Stage();

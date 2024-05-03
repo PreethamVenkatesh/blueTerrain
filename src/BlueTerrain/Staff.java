@@ -28,18 +28,37 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+/**
+ * The Staff class provides functionality related to managing staff profiles in the restaurant application.
+ * 
+ * <p>It allows adding, deleting, and viewing staff profiles based on their profile type.</p>
+ * 
+ * <p>This class contains methods to display a popup for managing staff profiles, adding new staff members,
+ * deleting existing staff members, and refreshing the staff profile table view.</p>
+ * 
+ * <p>The staff profiles are stored in the database table 'staffs'.</p>
+ * 
+ * @author Preetham
+ */
 public class Staff {
-
+    // SQL query to retrieve staff names based on profile type
     private static String STAFF_QUERY = "SELECT CONCAT(first_name, ' ', last_name) AS result_column FROM staffs WHERE profile_type = ?";
     
+    /**
+     * Displays a popup window for managing staff profiles based on the given profile type.
+     * 
+     * @param primaryStage The primary stage of the JavaFX application.
+     */
     public static void showStaffPopup(Stage primaryStage) {
         VBox root = Functions.commonHeader("/BlueTerrain/Images/BT_Common.jpeg");
-
+        
+        // Creating buttons for different staff types
         Button managerButton = Functions.createButtonMenu("MANAGERS", Color.LAVENDER);
         Button chefButton = Functions.createButtonMenu("CHEFS", Color.LAVENDER);
         Button waiterButton = Functions.createButtonMenu("WAITERS", Color.LAVENDER);
         Button driverButton = Functions.createButtonMenu("DELIVERY\nDRIVERS", Color.LAVENDER);
-
+        
+        // Setting actions for each button
         managerButton.setOnAction(e -> showStaffPopup("Manager"));
         chefButton.setOnAction(e -> showStaffPopup("Chef"));
         waiterButton.setOnAction(e -> showStaffPopup("Waiter"));
@@ -55,7 +74,8 @@ public class Staff {
         addStaffButton.setAlignment(Pos.BOTTOM_RIGHT);
         addStaffButton.setSpacing(10); 
         addStaffButton.setPadding(new Insets(20));
-
+        
+        // Creating a hyperlink to add new staff
         Hyperlink addStaffLink = new Hyperlink("Add Staff");
         addStaffLink.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
         addStaffLink.setOnAction(e -> {
@@ -78,6 +98,8 @@ public class Staff {
             profileTypeBox.getChildren().addAll(profileTypeLabel, profileTypeChoiceBox);
 
             Button addButton = new Button("Add");
+
+            // Retrieving entered values and inserting into database
             addButton.setOnAction(event -> {
                 String firstName = ((TextField) firstNameBox.getChildren().get(1)).getText();
                 String lastName = ((TextField) lastNameBox.getChildren().get(1)).getText();
@@ -118,12 +140,13 @@ public class Staff {
             addStaffPopup.showAndWait();
         });
 
+         // Creating a hyperlink to delete staff
         Hyperlink deleteStaffLink = new Hyperlink("Delete Staff");
         deleteStaffLink.setStyle("-fx-underline: true; -fx-text-fill: white; -fx-font-size: 20; -fx-padding: 5px 10px; -fx-border-radius: 5px;");
         deleteStaffLink.setOnAction(e -> {
             Stage deleteStaffPopup = new Stage();
             deleteStaffPopup.initModality(Modality.APPLICATION_MODAL);
-            deleteStaffPopup.setTitle(" Staff");
+            deleteStaffPopup.setTitle(" Staff"); // Placeholder for delete staff functionality
         });
 
         addStaffButton.getChildren().addAll(addStaffLink);
@@ -132,7 +155,12 @@ public class Staff {
         Functions.setupAndShowScene(primaryStage, root);
     }
 
-        @SuppressWarnings({ "unchecked", "deprecation" })
+    /**
+     * Displays a popup window for managing staff profiles based on the specified profile type.
+     * 
+     * @param profileType The profile type of the staff (e.g., "Manager", "Chef", "Waiter", "Delivery Driver").
+     */
+    @SuppressWarnings({ "unchecked", "deprecation" })
     private static void showStaffPopup(String profileType) {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -212,6 +240,11 @@ public class Staff {
         popupStage.showAndWait();
     }
 
+    /**
+     * Deletes the specified staff profile from the database.
+     * 
+     * @param profile The profile of the staff member to be deleted.
+     */
     private static void deleteStaffProfile(Profile profile) {
         try (Connection connection = Functions.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM staffs WHERE CONCAT(first_name, ' ', last_name) = ?")) {
@@ -223,6 +256,12 @@ public class Staff {
         }
     }
 
+    /**
+     * Refreshes the TableView displaying staff profiles based on the specified profile type.
+     * 
+     * @param profileType The profile type of the staff (e.g., "Manager", "Chef", "Waiter", "Delivery Driver").
+     * @param tableView    The TableView object to be refreshed.
+     */
     private static void refreshTableView(String profileType, TableView<Profile> tableView) {
         ObservableList<Profile> staffList = FXCollections.observableArrayList();
         try (Connection connection = Functions.getConnection();
